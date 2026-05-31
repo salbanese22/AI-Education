@@ -1,1 +1,986 @@
-file:///Users/stephenalbanese/Downloads/kaitlyn_ai_foundations.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kaitlyn's AI Foundations Guide</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --purple:#7c5cbf;--purple-d:#5a3a9f;--purple-light:#ede9ff;--purple-mid:#c4b5fd;
+  --blue:#4a90d9;--green:#2ecc8f;--amber:#f5a623;--coral:#f06b6b;--teal:#1abc9c;
+  --red:#e74c3c;
+  --text:#1a1a1a;--muted:#888;--muted2:#bbb;--border:#ebebeb;--bg:#f7f8f6;--card:#fff;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);padding-bottom:5rem}
+
+/* HERO */
+.hero{background:linear-gradient(140deg,#0d0d2b 0%,#1a0a3a 55%,#120d2a 100%);padding:3rem 1.5rem 2.5rem;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-80px;right:-80px;width:260px;height:260px;background:radial-gradient(circle,rgba(124,92,191,.2) 0%,transparent 70%);border-radius:50%}
+.hero::after{content:'';position:absolute;bottom:-50px;left:-50px;width:180px;height:180px;background:radial-gradient(circle,rgba(124,92,191,.12) 0%,transparent 70%);border-radius:50%}
+.hero-tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--purple-mid);border:1px solid rgba(196,181,253,.4);padding:4px 14px;border-radius:20px;margin-bottom:1rem}
+.hero h1{font-size:30px;font-weight:700;color:#fff;margin-bottom:10px;line-height:1.2}
+.hero h1 span{color:var(--purple-mid)}
+.hero-sub{font-size:14px;color:rgba(255,255,255,.6);max-width:480px;margin:0 auto 1rem;line-height:1.65}
+.hero-note{font-size:12px;color:rgba(255,255,255,.35);max-width:400px;margin:0 auto 1.5rem;line-height:1.6;font-style:italic}
+
+/* progress ring */
+.ring-wrap{display:flex;align-items:center;justify-content:center;gap:1.5rem;flex-wrap:wrap;margin-bottom:.5rem}
+.ring-container{position:relative;width:86px;height:86px;flex-shrink:0}
+.ring-container svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:rgba(255,255,255,.08);stroke-width:6}
+.ring-fill{fill:none;stroke:var(--purple-mid);stroke-width:6;stroke-linecap:round;stroke-dasharray:239;stroke-dashoffset:239;transition:stroke-dashoffset .6s ease}
+.ring-inner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.ring-pct{font-size:20px;font-weight:700;color:#fff;line-height:1}
+.ring-lbl{font-size:9px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.05em}
+.ring-stats{text-align:left}
+.ring-stat{font-size:13px;color:rgba(255,255,255,.65);margin-bottom:4px}
+.ring-stat strong{color:#fff}
+
+/* page */
+.page{max-width:720px;margin:0 auto;padding:0 1rem}
+.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:1.5rem 0}
+.how-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.85rem .6rem;text-align:center}
+.how-icon{font-size:18px;margin-bottom:5px}
+.how-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px}
+.how-desc{font-size:10px;color:var(--muted);line-height:1.4}
+
+/* step card */
+.step{background:var(--card);border-radius:18px;border:1px solid var(--border);margin-bottom:1.25rem;overflow:hidden;transition:border-color .3s}
+.step.locked{opacity:.5;pointer-events:none;filter:grayscale(.4)}
+.step.all-done{border-color:var(--purple-mid)}
+.step-hdr{padding:1.4rem 1.5rem 0}
+.step-top{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.step-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;background:var(--purple-light);color:var(--purple-d)}
+.step-title{font-size:17px;font-weight:700;flex:1}
+.done-badge{font-size:11px;font-weight:600;color:var(--purple-d);background:var(--purple-light);padding:2px 10px;border-radius:20px;display:none;flex-shrink:0}
+.step.all-done .done-badge{display:inline-block}
+.lock-badge{font-size:11px;font-weight:600;color:var(--muted);background:#f0f0f0;padding:2px 10px;border-radius:20px;flex-shrink:0}
+.step-desc{font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:1.25rem}
+.meter-wrap{margin:0 1.5rem 1.25rem;background:var(--border);height:3px;border-radius:2px}
+.meter-fill{height:3px;background:var(--purple);border-radius:2px;width:0%;transition:width .4s ease}
+
+/* watch */
+.watch{margin:0 1.5rem 1rem;background:#f0f7ff;border:1px solid #cce0f8;border-radius:12px;padding:1rem 1.15rem;display:flex;gap:14px;align-items:center}
+.watch-play{flex-shrink:0;width:52px;height:38px;background:#c00;border-radius:7px;display:flex;align-items:center;justify-content:center;text-decoration:none}
+.play-tri{width:0;height:0;border-top:8px solid transparent;border-bottom:8px solid transparent;border-left:14px solid #fff;margin-left:3px}
+.watch-info{flex:1}
+.watch-tag{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--blue);margin-bottom:3px}
+.watch-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;line-height:1.4}
+.watch-meta{font-size:11px;color:var(--muted);margin-bottom:7px}
+.watch-btn{display:inline-block;font-size:11px;font-weight:600;background:var(--blue);color:#fff;padding:4px 12px;border-radius:20px;text-decoration:none}
+
+/* reading */
+.reading{margin:0 1.5rem 1.25rem;background:#fdf8ff;border:1px solid #e8d8f8;border-radius:12px;padding:.9rem 1.1rem;display:flex;gap:12px;align-items:center}
+.read-icon{font-size:22px;flex-shrink:0}
+.read-info{flex:1}
+.read-tag{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--purple);margin-bottom:3px}
+.read-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px}
+.read-meta{font-size:11px;color:var(--muted);margin-bottom:6px}
+.read-btn{display:inline-block;font-size:11px;font-weight:600;background:var(--purple);color:#fff;padding:4px 12px;border-radius:20px;text-decoration:none}
+
+/* concept box */
+.concept{margin:0 1.5rem 1.25rem;background:#faf8ff;border:1px solid #e0d0f8;border-radius:12px;padding:1rem 1.15rem}
+.concept-label{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--purple-d);margin-bottom:8px}
+.concept-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.concept-item{background:#fff;border:1px solid #ece8f8;border-radius:8px;padding:.7rem .85rem}
+.concept-term{font-size:12px;font-weight:700;color:var(--purple-d);margin-bottom:3px}
+.concept-def{font-size:11.5px;color:var(--muted);line-height:1.55}
+
+/* experiments */
+.exp-sec{padding:0 1.5rem}
+.sec-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#ccc;margin-bottom:10px}
+.exp-list{list-style:none;margin-bottom:1.25rem}
+.exp-item{border:1px solid #f0f0f0;border-radius:12px;padding:1rem 1.1rem;margin-bottom:.65rem;cursor:pointer;transition:all .25s;user-select:none}
+.exp-item:hover:not(.done){border-color:#d0d0d0}
+.exp-item.done{background:var(--purple-light);border-color:var(--purple-mid);cursor:default}
+.exp-top{display:flex;align-items:flex-start;gap:10px}
+.exp-check{flex-shrink:0;width:22px;height:22px;border-radius:50%;border:2px solid #ddd;display:flex;align-items:center;justify-content:center;transition:all .25s;background:#fff;margin-top:1px}
+.exp-check.on{background:var(--purple);border-color:var(--purple)}
+.exp-check.on::after{content:'✓';color:#fff;font-size:12px;font-weight:700}
+.exp-label{font-size:13px;font-weight:600;color:var(--text);line-height:1.5}
+.exp-item.done .exp-label{color:var(--purple-d)}
+.exp-why{font-size:12px;color:var(--muted);line-height:1.6;margin:6px 0 10px 32px}
+.exp-item.done .exp-why{display:none}
+.try-box{margin-left:32px;background:#f4f7ff;border-left:3px solid var(--purple);border-radius:0 8px 8px 0;padding:.7rem .9rem}
+.try-lbl{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--purple);margin-bottom:5px}
+.try-prompt{font-size:12.5px;color:#2a2a2a;line-height:1.65;font-style:italic;margin-bottom:8px}
+.try-btn{display:inline-block;font-size:11px;font-weight:600;background:var(--text);color:#fff;padding:5px 13px;border-radius:20px;text-decoration:none}
+.exp-item.done .try-box{display:none}
+.exp-win{display:none;font-size:12px;color:var(--purple-d);font-weight:600;margin:5px 0 0 32px}
+.exp-item.done .exp-win{display:block}
+
+/* knowledge check */
+.kcheck{margin:0 1.5rem 1.25rem;border:2px solid #e8d8f0;border-radius:14px;overflow:hidden}
+.kcheck-hdr{background:linear-gradient(135deg,#f5f0ff,#ede5ff);padding:1rem 1.15rem;display:flex;align-items:center;gap:10px}
+.kcheck-icon{font-size:22px}
+.kcheck-hdr-text{flex:1}
+.kcheck-title{font-size:14px;font-weight:700;color:var(--purple-d);margin-bottom:2px}
+.kcheck-sub{font-size:11px;color:#7a5ab0;line-height:1.5}
+.kcheck-locked{padding:1rem 1.15rem;text-align:center;color:var(--muted);font-size:13px;background:#fafafa}
+.kcheck-body{padding:1rem 1.15rem;display:none}
+.kcheck-body.open{display:block}
+.kcheck-intro{font-size:12.5px;color:#555;line-height:1.65;margin-bottom:1rem;padding:.75rem 1rem;background:#f8f5ff;border-radius:8px;border:1px solid #e0d0f8}
+.kq{margin-bottom:1rem}
+.kq-text{font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;line-height:1.5}
+.kq-num{color:var(--purple);margin-right:4px}
+.kq textarea{width:100%;font-size:12.5px;border:1px solid #e0e0e0;border-radius:8px;padding:.65rem .85rem;resize:vertical;min-height:70px;font-family:inherit;line-height:1.6;color:var(--text);background:#fff;transition:border-color .2s}
+.kq textarea:focus{outline:none;border-color:var(--purple)}
+.kcheck-evaluate{width:100%;background:var(--purple);color:#fff;font-size:13px;font-weight:700;padding:11px;border:none;border-radius:10px;cursor:pointer;margin-top:.5rem;transition:background .2s}
+.kcheck-evaluate:hover{background:var(--purple-d)}
+.kcheck-evaluate:disabled{background:#ccc;cursor:not-allowed}
+.kcheck-result{margin-top:1rem;padding:1rem;border-radius:10px;font-size:13px;line-height:1.65;display:none}
+.kcheck-result.pass{background:var(--purple-light);border:1px solid var(--purple-mid);color:#4a2a99}
+.kcheck-result.fail{background:#fef0f0;border:1px solid #f8c8c8;color:#8a2a2a}
+.kcheck-result.loading{background:#f8f8f8;border:1px solid #e0e0e0;color:var(--muted)}
+.result-score{font-size:22px;font-weight:700;margin-bottom:6px}
+.result-feedback{font-size:12.5px;line-height:1.7;margin-bottom:10px}
+.result-unlock{display:inline-block;font-size:12px;font-weight:700;background:var(--purple);color:#fff;padding:7px 18px;border-radius:20px;cursor:pointer;border:none;margin-top:4px}
+.result-retry{display:inline-block;font-size:12px;font-weight:700;background:var(--coral);color:#fff;padding:7px 18px;border-radius:20px;cursor:pointer;border:none;margin-top:4px}
+
+/* evaluator */
+.evaluator{margin:0 1.5rem 1.25rem;border:2px solid #e0d0f8;border-radius:14px;overflow:hidden}
+.eval-hdr{background:linear-gradient(135deg,#f5f0ff,#ede5ff);padding:1rem 1.15rem;display:flex;align-items:center;gap:10px}
+.eval-icon{font-size:22px}
+.eval-hdr-text{flex:1}
+.eval-title{font-size:14px;font-weight:700;color:var(--purple-d);margin-bottom:2px}
+.eval-sub{font-size:11px;color:#7a5ab0;line-height:1.5}
+.eval-body{padding:1rem 1.15rem;display:none}
+.eval-body.open{display:block}
+.eval-intro{font-size:12.5px;color:#555;line-height:1.65;margin-bottom:1rem;padding:.75rem 1rem;background:#f8f5ff;border-radius:8px;border:1px solid #e0d0f8}
+.eval-field label{font-size:12px;font-weight:600;color:var(--text);margin-bottom:5px;display:block}
+.eval-field textarea{width:100%;font-size:12px;border:1px solid #e0e0e0;border-radius:8px;padding:.65rem .85rem;resize:vertical;min-height:90px;font-family:inherit;line-height:1.6;color:var(--text);background:#fff;margin-bottom:.75rem;transition:border-color .2s}
+.eval-field textarea:focus{outline:none;border-color:var(--purple)}
+.eval-submit{width:100%;background:var(--purple);color:#fff;font-size:13px;font-weight:700;padding:11px;border:none;border-radius:10px;cursor:pointer;transition:background .2s}
+.eval-submit:hover{background:var(--purple-d)}
+.eval-submit:disabled{background:#ccc;cursor:not-allowed}
+.eval-result{margin-top:1rem;padding:1rem;border-radius:10px;font-size:13px;line-height:1.65;display:none}
+.eval-result.show{display:block;background:var(--purple-light);border:1px solid var(--purple-mid);color:#4a2a99}
+.eval-result.loading{display:block;background:#f8f8f8;border:1px solid #e0e0e0;color:var(--muted)}
+.eval-result.needs-work{display:block;background:#fff8f0;border:1px solid #f0d8a8;color:#7a4a00}
+.score-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.score-item{background:rgba(255,255,255,.7);border-radius:8px;padding:.6rem .75rem;text-align:center}
+.score-num{font-size:20px;font-weight:700;line-height:1}
+.score-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
+.unlock-next{display:inline-block;font-size:12px;font-weight:700;background:var(--purple);color:#fff;padding:8px 20px;border-radius:20px;cursor:pointer;border:none;margin-top:8px}
+
+/* project */
+.proj-wrap{margin:0 1.5rem 1.25rem}
+.proj{background:linear-gradient(135deg,#f8f5ff,#f0eaff);border:1px solid #d8c8f8;border-radius:12px;padding:1.15rem 1.2rem}
+.proj-lbl{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--purple-d);margin-bottom:6px}
+.proj-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px}
+.proj-desc{font-size:12.5px;color:#666;line-height:1.65;margin-bottom:10px}
+.proj-prompt{font-size:12px;background:rgba(255,255,255,.85);border:1px solid #d8c8f8;border-radius:8px;padding:.65rem .85rem;color:#333;line-height:1.75;font-style:italic;margin-bottom:10px;white-space:pre-wrap}
+.proj-btn{display:inline-block;font-size:12px;font-weight:600;background:#1a1a1a;color:#fff;padding:7px 18px;border-radius:20px;text-decoration:none}
+
+/* dad box */
+.dad-box{margin:0 1.5rem 1.25rem;background:linear-gradient(135deg,#f0f8ff,#e8f4fb);border:1px solid #b8d8f0;border-radius:12px;padding:1rem 1.15rem}
+.dad-label{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#2a6090;margin-bottom:6px}
+.dad-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:5px}
+.dad-text{font-size:12.5px;color:#444;line-height:1.65}
+.dad-q{margin-top:8px;padding-left:12px;border-left:3px solid var(--blue)}
+.dad-q p{font-size:12px;color:#2a6090;line-height:1.7;font-style:italic}
+
+/* tip */
+.tip-box{margin:0 1.5rem 1.25rem;background:#fffef0;border:1px solid #f0e8a0;border-radius:12px;padding:.9rem 1.1rem}
+.tip-label{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#a08000;margin-bottom:6px}
+.tip-text{font-size:12.5px;color:#555;line-height:1.65}
+.tip-text strong{color:#333}
+
+/* tool landscape */
+.tool-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 1.5rem 1.25rem}
+.tool-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:.85rem .9rem}
+.tool-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px}
+.tool-maker{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.tool-desc{font-size:11px;color:var(--muted);line-height:1.5}
+.tool-best{font-size:10px;font-weight:600;color:var(--purple-d);background:var(--purple-light);padding:2px 7px;border-radius:10px;display:inline-block;margin-top:4px}
+
+/* resources */
+.res-wrap{padding:0 1.5rem 1.5rem}
+.res-lbl{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#ccc;margin-bottom:8px}
+.res-row{display:flex;flex-wrap:wrap;gap:7px}
+.res-link{font-size:12px;color:var(--purple);border:1px solid var(--purple-mid);background:var(--purple-light);padding:4px 12px;border-radius:20px;text-decoration:none}
+.res-link:hover{background:#ddd8f8}
+
+/* celebration */
+.cel-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;z-index:1000}
+.cel-overlay.show{display:flex}
+.cel-card{background:#fff;border-radius:24px;padding:2.5rem 2rem;text-align:center;max-width:380px;width:92%;animation:popIn .5s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes popIn{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+.cel-emoji{font-size:60px;display:block;margin-bottom:1rem;animation:bounce .6s ease .3s both}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.cel-title{font-size:24px;font-weight:700;margin-bottom:8px}
+.cel-sub{font-size:14px;color:var(--muted);line-height:1.65;margin-bottom:1.5rem}
+.cel-btn{background:var(--purple);color:#fff;font-size:14px;font-weight:600;padding:11px 30px;border-radius:24px;border:none;cursor:pointer}
+.confetti-c{position:fixed;top:0;left:0;right:0;pointer-events:none;z-index:999}
+.cp{position:absolute;top:-10px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:0}}
+.footer{max-width:720px;margin:2rem auto 0;padding:1.5rem 1rem;text-align:center;border-top:1px solid var(--border)}
+.footer p{font-size:12px;color:var(--muted2);line-height:1.8}
+.footer a{color:var(--purple);text-decoration:none}
+
+@media(max-width:480px){
+  .hero h1{font-size:24px}
+  .how-grid{grid-template-columns:repeat(2,1fr)}
+  .concept-grid{grid-template-columns:1fr}
+  .tool-grid{grid-template-columns:1fr 1fr}
+  .watch{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<div class="confetti-c" id="confetti"></div>
+<div class="cel-overlay" id="cel">
+  <div class="cel-card">
+    <span class="cel-emoji">🧠</span>
+    <div class="cel-title">AI foundations: complete.</div>
+    <div class="cel-sub">You now understand how AI actually works, why it fails, how to think critically about its outputs, where your field is headed, and how to use this as a career edge. That's not just a skill — it's a superpower most people your age don't have.</div>
+    <button class="cel-btn" onclick="closeCel()">Keep building →</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Guide 2 of 2 · AI Foundations</div>
+  <h1>How <span>AI</span> actually works —<br>and how to think with it.</h1>
+  <p class="hero-sub">Tool-agnostic. No hype. Five steps covering the mental models, critical thinking skills, and real-world context that make you a genuinely educated AI user — not just a Claude user.</p>
+  <p class="hero-note">You've mastered Claude in Guide 1. Now zoom out and understand the whole landscape.</p>
+  <div class="ring-wrap">
+    <div class="ring-container">
+      <svg width="86" height="86" viewBox="0 0 86 86">
+        <circle class="ring-bg" cx="43" cy="43" r="38"/>
+        <circle class="ring-fill" id="ring" cx="43" cy="43" r="38"/>
+      </svg>
+      <div class="ring-inner"><div class="ring-pct" id="rpct">0%</div><div class="ring-lbl">done</div></div>
+    </div>
+    <div class="ring-stats">
+      <div class="ring-stat"><strong id="sdone">0</strong> of <strong>20</strong> experiments done</div>
+      <div class="ring-stat"><strong id="ssteps">0</strong> of <strong>5</strong> steps complete</div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="how-grid">
+    <div class="how-card"><div class="how-icon">▶</div><div class="how-title">Watch</div><div class="how-desc">See the concept first</div></div>
+    <div class="how-card"><div class="how-icon">✱</div><div class="how-title">Try</div><div class="how-desc">Experiments to make it real</div></div>
+    <div class="how-card"><div class="how-icon">🧠</div><div class="how-title">Lock it in</div><div class="how-desc">Knowledge check to unlock</div></div>
+    <div class="how-card"><div class="how-icon">⬡</div><div class="how-title">Build</div><div class="how-desc">Apply it, get evaluated</div></div>
+  </div>
+
+<!-- ═══ STEP 1 ═══ -->
+<div class="step" id="step1">
+  <div class="step-hdr">
+    <div class="step-top">
+      <div class="step-icon">1</div>
+      <div class="step-title">How AI actually works</div>
+      <span class="done-badge">Complete ✓</span>
+    </div>
+    <p class="step-desc">Before you can use AI well, you need to understand what it actually is under the hood — not the hype, not the sci-fi version, but the real mechanism. This step gives you the mental model that makes everything else click.</p>
+  </div>
+  <div class="meter-wrap"><div class="meter-fill" id="m1"></div></div>
+
+  <div class="watch">
+    <a class="watch-play" href="https://www.youtube.com/watch?v=zjkBMFhNj_g" target="_blank"><div class="play-tri"></div></a>
+    <div class="watch-info">
+      <div class="watch-tag">Watch first · 27 min</div>
+      <div class="watch-title">But what is a neural network? — 3Blue1Brown</div>
+      <div class="watch-meta">The best visual explanation of how AI learns that exists. Not just for engineers — anyone can follow this. Watch it fully before the experiments.</div>
+      <a class="watch-btn" href="https://www.youtube.com/watch?v=zjkBMFhNj_g" target="_blank">Watch on YouTube →</a>
+    </div>
+  </div>
+
+  <div class="reading">
+    <div class="read-icon">📖</div>
+    <div class="read-info">
+      <div class="read-tag">Read · 8 min</div>
+      <div class="read-title">How Large Language Models Work — Explained Simply (2026)</div>
+      <div class="read-meta">Written for non-engineers. Covers tokens, training, and why AI "predicts" rather than "knows"</div>
+      <a class="read-btn" href="https://keymakr.com/blog/what-is-an-llm-complete-guide-to-large-language-models-2026/" target="_blank">Read the guide →</a>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">Key concepts to lock in</div>
+    <div class="concept-grid">
+      <div class="concept-item"><div class="concept-term">Token</div><div class="concept-def">The smallest unit AI reads — roughly a word or part of a word. AI processes everything as tokens, not letters or sentences.</div></div>
+      <div class="concept-item"><div class="concept-term">Context window</div><div class="concept-def">How much text AI can "see" at once. Like short-term memory — once it fills up, earlier content falls out.</div></div>
+      <div class="concept-item"><div class="concept-term">Training</div><div class="concept-def">The process where AI learned from billions of words of text — books, websites, code. It happened once. It's not learning from your conversations.</div></div>
+      <div class="concept-item"><div class="concept-term">Next-token prediction</div><div class="concept-def">The actual mechanism: AI predicts the most likely next word given everything before it. That's it. That's the engine.</div></div>
+      <div class="concept-item"><div class="concept-term">Parameters</div><div class="concept-def">The billions of numbers inside an AI model that encode everything it "learned" during training. More ≠ always better.</div></div>
+      <div class="concept-item"><div class="concept-term">Hallucination</div><div class="concept-def">When AI generates text that sounds confident but is factually wrong. It's not lying — it's pattern-completing without knowing it's wrong.</div></div>
+    </div>
+  </div>
+
+  <div class="exp-sec">
+    <div class="sec-label">Experiments — complete all 4 to unlock the knowledge check</div>
+    <ul class="exp-list" id="list1">
+      <li class="exp-item" onclick="tick(this,1)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Watch AI predict tokens in real time</span></div>
+        <p class="exp-why">The best way to understand next-token prediction is to watch it happen. This experiment makes the mechanism visible — you'll never think of AI the same way again.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">Ask Claude: "Can you explain what you're actually doing mechanically when you generate a response — step by step, in simple terms? What does 'next token prediction' mean in practice?"</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">You just made the mechanism visible. That's the whole engine. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,1)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Hit the context window limit — feel what it means</span></div>
+        <p class="exp-why">Context windows are one of the most important practical limitations of AI. This experiment makes the concept concrete by showing you what happens when context runs low.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">Ask Claude: "If I gave you a 500-page book to read in one conversation, what would happen? What is a context window, and what are its practical implications for how I should structure my prompts?"</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">Context windows explained. Now you know why long conversations degrade. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,1)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Trigger a hallucination — on purpose</span></div>
+        <p class="exp-why">The most important AI safety skill is knowing when it's wrong. You can't develop that skill without seeing hallucinations happen. This experiment does it safely and deliberately.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">Ask Claude about a very obscure, niche topic — something so specific that it's unlikely to have reliable training data on it (a minor local event, a very small company, or an obscure research paper). Then ask: "How confident are you in that answer, and how would I verify it?"</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">You've seen hallucination in the wild. Now you know to always verify. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,1)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Compare AI tools on the same prompt</span></div>
+        <p class="exp-why">Claude, ChatGPT, and Gemini are all trained differently and produce different outputs. Running the same prompt across tools is how you develop real AI judgment — not loyalty to one tool.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">Pick any prompt from Guide 1 that gave you a useful result. Run the exact same prompt in ChatGPT (chatgpt.com) or Gemini (gemini.google.com). Compare the outputs. Then ask Claude: "Why might different AI models give different answers to the same prompt?"</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">Tool-agnostic thinking unlocked. You evaluate AI, not just use it. ✓</p>
+      </li>
+    </ul>
+  </div>
+
+  <div class="kcheck" id="kc1">
+    <div class="kcheck-hdr"><div class="kcheck-icon">🧠</div><div class="kcheck-hdr-text"><div class="kcheck-title">Lock it in — Step 1</div><div class="kcheck-sub">Answer in your own words. Claude evaluates and scores your responses. Pass to unlock your build.</div></div></div>
+    <div class="kcheck-locked" id="kc1-locked">Complete all 4 experiments above to unlock.</div>
+    <div class="kcheck-body" id="kc1-body">
+      <div class="kcheck-intro">No looking things up. Write like you're explaining to a smart friend who's never heard of AI.</div>
+      <div class="kq"><div class="kq-text"><span class="kq-num">Q1.</span> Explain in your own words what next-token prediction means — and what it tells you about what AI actually "is" vs. what most people think it is.</div><textarea id="kc1q1" placeholder="Your answer..."></textarea></div>
+      <div class="kq"><div class="kq-text"><span class="kq-num">Q2.</span> What is a hallucination and why does it happen? Give a real-world example of when a hallucination would be dangerous vs. when it would be harmless.</div><textarea id="kc1q2" placeholder="Your answer..."></textarea></div>
+      <div class="kq"><div class="kq-text"><span class="kq-num">Q3.</span> You tried the same prompt in two different AI tools. What did you notice? What does this tell you about how AI tools should be chosen and used?</div><textarea id="kc1q3" placeholder="Your answer..."></textarea></div>
+      <button class="kcheck-evaluate" id="kc1-btn" onclick="evaluateKC(1)">Submit for Evaluation →</button>
+      <div class="kcheck-result" id="kc1-result"></div>
+    </div>
+  </div>
+
+  <div class="proj-wrap" id="build1" style="display:none">
+    <div class="proj">
+      <div class="proj-lbl">Your build — unlocked!</div>
+      <div class="proj-title">Build an AI explainer for someone who knows nothing</div>
+      <div class="proj-desc">The best way to lock in a concept is to teach it. Ask Claude to help you build a one-page explainer that teaches your roommate or a non-technical friend how AI works. Then evaluate it below.</div>
+      <p class="proj-prompt">"Help me write a clear, engaging one-page explainer on how AI (specifically large language models) actually works — aimed at a complete beginner. Cover: what training is, what next-token prediction means, what hallucination is, and one thing most people get wrong about AI. Make it conversational, not technical."</p>
+      <a class="proj-btn" href="https://claude.ai" target="_blank">Open Claude and build it →</a>
+    </div>
+  </div>
+
+  <div class="evaluator" id="ev1" style="display:none">
+    <div class="eval-hdr"><div class="eval-icon">⚡</div><div class="eval-hdr-text"><div class="eval-title">Build Evaluator — Step 1</div><div class="eval-sub">Paste your explainer and describe how you built it. Get scored and unlock Step 2.</div></div></div>
+    <div class="eval-body open">
+      <div class="eval-intro">Paste your AI explainer below. Claude will score it on clarity, accuracy, accessibility, and whether it corrects common misconceptions.</div>
+      <div class="eval-field"><label>Paste your AI explainer here</label><textarea id="ev1-desc" placeholder="Paste the one-page explainer you built with Claude..."></textarea></div>
+      <div class="eval-field"><label>What was the hardest concept to explain simply, and how did you handle it?</label><textarea id="ev1-learn" placeholder="Which concept gave you trouble and why? What approach worked?"></textarea></div>
+      <button class="eval-submit" id="ev1-btn" onclick="evaluateBuild(1)">Get My Score & Unlock Step 2 →</button>
+      <div class="eval-result" id="ev1-result"></div>
+    </div>
+  </div>
+
+  <div class="res-wrap"><div class="res-lbl">Go deeper</div><div class="res-row"><a class="res-link" href="https://www.youtube.com/watch?v=wjZofJX0v4M" target="_blank">3Blue1Brown: Transformers explained (YouTube)</a><a class="res-link" href="https://blogs.library.duke.edu/blog/2026/01/05/its-2026-why-are-llms-still-hallucinating/" target="_blank">Why LLMs still hallucinate in 2026 (Duke)</a></div></div>
+</div>
+
+<!-- ═══ STEP 2 ═══ -->
+<div class="step locked" id="step2">
+  <div class="step-hdr">
+    <div class="step-top"><div class="step-icon">2</div><div class="step-title">Prompting as a universal skill</div><span class="lock-badge">🔒 Complete Step 1 to unlock</span><span class="done-badge">Complete ✓</span></div>
+    <p class="step-desc">You learned to prompt Claude in Guide 1. Now understand the underlying principles that make prompting work — and why those principles transfer identically to every AI tool you'll ever use.</p>
+  </div>
+  <div class="meter-wrap"><div class="meter-fill" id="m2"></div></div>
+
+  <div class="watch">
+    <a class="watch-play" href="https://www.youtube.com/watch?v=1bUy-1hGZpI" target="_blank"><div class="play-tri"></div></a>
+    <div class="watch-info">
+      <div class="watch-tag">Watch first · 10 min</div>
+      <div class="watch-title">Prompt Engineering Overview — Anthropic (Official)</div>
+      <div class="watch-meta">Straight from the people who built Claude — the principles behind effective prompting, explained from first principles</div>
+      <a class="watch-btn" href="https://www.youtube.com/watch?v=1bUy-1hGZpI" target="_blank">Watch on YouTube →</a>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <div class="tip-label">💡 Why prompting is a thinking skill, not a typing skill</div>
+    <p class="tip-text">A good prompt is really a well-structured thought. When you give AI a role, context, goal, format, and constraints — you're not following a formula. You're thinking clearly about what you actually want. <strong>The people who get the best results from AI aren't the ones who know the most tricks — they're the ones who think most precisely.</strong> That's an IE skill. Systems thinking applied to communication.</p>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">The five elements of any great prompt — works in every AI tool</div>
+    <div class="concept-grid">
+      <div class="concept-item"><div class="concept-term">Role</div><div class="concept-def">"You are a..." — sets the expertise level and perspective AI takes. Works in Claude, ChatGPT, Gemini, all of them.</div></div>
+      <div class="concept-item"><div class="concept-term">Context</div><div class="concept-def">Who you are, what situation you're in, what you already know. AI has no background — you have to provide it.</div></div>
+      <div class="concept-item"><div class="concept-term">Goal</div><div class="concept-def">What the output is actually for. Not just "explain X" but "explain X so I can use it to do Y."</div></div>
+      <div class="concept-item"><div class="concept-term">Format</div><div class="concept-def">How you want the output structured — length, bullets vs prose, tone, level of detail. Explicitly stating this eliminates guessing.</div></div>
+      <div class="concept-item"><div class="concept-term">Constraints</div><div class="concept-def">What NOT to do. "Don't use jargon." "No generic advice." "Under 200 words." Negative constraints cut noise dramatically.</div></div>
+      <div class="concept-item"><div class="concept-term">Iteration</div><div class="concept-def">First response = draft. The real skill is the follow-up. "Make it shorter / more specific / aimed at X audience." Always push back.</div></div>
+    </div>
+  </div>
+
+  <div class="exp-sec">
+    <div class="sec-label">Experiments</div>
+    <ul class="exp-list" id="list2">
+      <li class="exp-item" onclick="tick(this,2)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Reverse-engineer a prompt from a great output</span></div>
+        <p class="exp-why">One of the best ways to understand prompting is to work backwards. Take an output you love and figure out what prompt produced it — this builds intuition for prompt structure faster than any tutorial.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">Find a piece of AI-generated content you think is excellent (from Guide 1 or anywhere). Ask Claude: "Here's an output I think is great: [paste it]. What prompt do you think produced this? Reconstruct the likely prompt — including the role, context, format, and any constraints that were probably specified."</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">You can now reverse-engineer quality. That's a serious skill. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,2)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Run the same prompt in three different AI tools</span></div>
+        <p class="exp-why">The same five-element prompt structure works in Claude, ChatGPT, and Gemini. This experiment proves it — and shows you how to evaluate which tool gives better output for which task.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">Write a strong five-element prompt on any topic you care about. Run it in Claude AND in either ChatGPT (chatgpt.com) or Gemini (gemini.google.com). Compare the outputs side by side. Which was more accurate? More readable? More useful? Which tool would you use for that task going forward and why?</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">You're evaluating AI tools, not just using them. That's the difference. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,2)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Build a reusable prompt template for any task</span></div>
+        <p class="exp-why">Power users don't write prompts from scratch every time. They build templates — fill-in-the-blank frameworks they reuse. This is how you turn prompting into a system rather than a habit.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">"Help me build a reusable prompt template for [a task you do repeatedly — studying for exams, writing emails, analyzing data]. It should have blanks I fill in for the specific situation each time, but include all five elements: role, context, goal, format, and constraints."</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">Prompting as a system. Template saved, works in any tool. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,2)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Use constraints to eliminate generic output</span></div>
+        <p class="exp-why">The single most underused prompting technique is negative constraints. Telling AI what NOT to do is often more powerful than telling it what to do. This experiment proves it.</p>
+        <div class="try-box"><div class="try-lbl">Try this — two rounds</div><p class="try-prompt">Round 1: Ask for advice on any topic, with no constraints. Round 2: Same topic, but add: "Do not give generic advice that applies to everyone. Do not use bullet points. Do not use the words 'important', 'crucial', or 'leverage'. Give me specific, actionable advice for someone in my exact situation." Compare the two outputs.</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">Constraints are the most underrated prompting tool. Now you know it. ✓</p>
+      </li>
+    </ul>
+  </div>
+
+  <div class="kcheck" id="kc2">
+    <div class="kcheck-hdr"><div class="kcheck-icon">🧠</div><div class="kcheck-hdr-text"><div class="kcheck-title">Lock it in — Step 2</div><div class="kcheck-sub">Answer in your own words to unlock your build.</div></div></div>
+    <div class="kcheck-locked" id="kc2-locked">Complete all 4 experiments to unlock.</div>
+    <div class="kcheck-body" id="kc2-body">
+      <div class="kcheck-intro">Show what you actually understood — not what you read.</div>
+      <div class="kq"><div class="kq-text"><span class="kq-num">Q1.</span> Name and explain the five elements of a great prompt. For each one, give a concrete example from a task you'd actually do as an IE student.</div><textarea id="kc2q1" placeholder="Your answer..."></textarea></div>
+      <div class="kq"><div class="kq-text"><span class="kq-num">Q2.</span> You ran the same prompt in two different AI tools. What did you find? Based on that, when would you choose ChatGPT over Claude, or vice versa?</div><textarea id="kc2q2" placeholder="Your answer..."></textarea></div>
+      <div class="kq"><div class="kq-text"><span class="kq-num">Q3.</span> Why are negative constraints so powerful in prompting? Give an example of a strong constraint and explain why it improves output.</div><textarea id="kc2q3" placeholder="Your answer..."></textarea></div>
+      <button class="kcheck-evaluate" id="kc2-btn" onclick="evaluateKC(2)">Submit for Evaluation →</button>
+      <div class="kcheck-result" id="kc2-result"></div>
+    </div>
+  </div>
+
+  <div class="proj-wrap" id="build2" style="display:none">
+    <div class="proj">
+      <div class="proj-lbl">Your build — unlocked!</div>
+      <div class="proj-title">Build your personal prompt library</div>
+      <div class="proj-desc">Every power AI user has a library of reusable prompts. Build yours — 5 prompt templates covering the tasks you do most as a student, engineer-in-training, and person interested in fitness and career growth.</div>
+      <p class="proj-prompt">"Help me build a personal prompt library — 5 reusable prompt templates I can use across any AI tool (Claude, ChatGPT, Gemini) for the tasks I do most often. I'm an IE student at Lehigh who also cares about fitness, career development, and efficient studying. For each template: give it a name, explain when to use it, and write the full fill-in-the-blank prompt with all 5 elements included."</p>
+      <a class="proj-btn" href="https://claude.ai" target="_blank">Open Claude and build it →</a>
+    </div>
+  </div>
+
+  <div class="evaluator" id="ev2" style="display:none">
+    <div class="eval-hdr"><div class="eval-icon">⚡</div><div class="eval-hdr-text"><div class="eval-title">Build Evaluator — Step 2</div><div class="eval-sub">Share your prompt library to get scored and unlock Step 3.</div></div></div>
+    <div class="eval-body open">
+      <div class="eval-intro">Paste your 5 prompt templates below. Claude will score them on completeness, transferability, specificity, and real-world usefulness.</div>
+      <div class="eval-field"><label>Paste your 5 prompt templates</label><textarea id="ev2-desc" placeholder="Template 1: [name] — [when to use] — [full prompt]..."></textarea></div>
+      <div class="eval-field"><label>Which template do you think is your strongest and why?</label><textarea id="ev2-learn" placeholder="Be specific about what makes it strong..."></textarea></div>
+      <button class="eval-submit" id="ev2-btn" onclick="evaluateBuild(2)">Get My Score & Unlock Step 3 →</button>
+      <div class="eval-result" id="ev2-result"></div>
+    </div>
+  </div>
+
+  <div class="res-wrap"><div class="res-lbl">Go deeper</div><div class="res-row"><a class="res-link" href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview" target="_blank">Anthropic prompt engineering guide</a><a class="res-link" href="https://github.com/anthropics/prompt-eng-interactive-tutorial" target="_blank">Anthropic interactive tutorial</a></div></div>
+</div>
+
+<!-- ═══ STEP 3 ═══ -->
+<div class="step locked" id="step3">
+  <div class="step-hdr">
+    <div class="step-top"><div class="step-icon">3</div><div class="step-title">When NOT to trust AI</div><span class="lock-badge">🔒 Complete Step 2 to unlock</span><span class="done-badge">Complete ✓</span></div>
+    <p class="step-desc">This is the step most people skip — and it's the most important one for using AI responsibly. Knowing when AI is wrong, when to verify, and when not to use it at all separates educated users from everyone else.</p>
+  </div>
+  <div class="meter-wrap"><div class="meter-fill" id="m3"></div></div>
+
+  <div class="watch">
+    <a class="watch-play" href="https://www.youtube.com/watch?v=tcdVC4e6EV4" target="_blank"><div class="play-tri"></div></a>
+    <div class="watch-info">
+      <div class="watch-tag">Watch first · 15 min</div>
+      <div class="watch-title">The Problem with AI Hallucinations — and How to Catch Them</div>
+      <div class="watch-meta">A clear breakdown of when and why AI gets things wrong — and the practical strategies to verify outputs before trusting them</div>
+      <a class="watch-btn" href="https://www.youtube.com/watch?v=tcdVC4e6EV4" target="_blank">Watch on YouTube →</a>
+    </div>
+  </div>
+
+  <div class="reading">
+    <div class="read-icon">📖</div>
+    <div class="read-info">
+      <div class="read-tag">Read · 6 min</div>
+      <div class="read-title">It's 2026. Why Are LLMs Still Hallucinating? (Duke University)</div>
+      <div class="read-meta">Written for students — honest, evidence-based, covers what 94% of Duke students found confusing about AI accuracy</div>
+      <a class="read-btn" href="https://blogs.library.duke.edu/blog/2026/01/05/its-2026-why-are-llms-still-hallucinating/" target="_blank">Read the guide →</a>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">The AI critical thinking framework — use this every time</div>
+    <div class="concept-grid">
+      <div class="concept-item"><div class="concept-term">High-stakes = verify</div><div class="concept-def">Medical, legal, financial, safety decisions. If being wrong has real consequences, always verify with authoritative sources.</div></div>
+      <div class="concept-item"><div class="concept-term">Cite-worthy? Check it</div><div class="concept-def">AI can fabricate citations, statistics, and quotes that sound real. Never cite AI-generated facts in academic work without verifying.</div></div>
+      <div class="concept-item"><div class="concept-term">Confident ≠ correct</div><div class="concept-def">AI delivers wrong answers in exactly the same confident tone as correct ones. Confidence is not evidence of accuracy.</div></div>
+      <div class="concept-item"><div class="concept-term">Ask for uncertainty</div><div class="concept-def">Prompt AI to tell you how confident it is and where it might be wrong. "What don't you know about this?" is a powerful question.</div></div>
+      <div class="concept-item"><div class="concept-term">Lateral reading</div><div class="concept-def">Don't verify a claim by asking AI again. Go to independent sources — original papers, official sites, established publications.</div></div>
+      <div class="concept-item"><div class="concept-term">Your judgment > AI</div><div class="concept-def">AI doesn't have values, judgment, or stakes in outcomes. For decisions that affect you or others, your reasoning is the final word.</div></div>
+    </div>
+  </div>
+
+  <div class="exp-sec">
+    <div class="sec-label">Experiments</div>
+    <ul class="exp-list" id="list3">
+      <li class="exp-item" onclick="tick(this,3)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Make AI admit what it doesn't know</span></div>
+        <p class="exp-why">Most people never ask AI about its own uncertainty. This is a mistake. Getting AI to surface its own limitations is one of the highest-value habits you can build.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">Ask Claude about any topic in your IE coursework. Then follow up: "Where in that answer are you least certain? What would you need to know to be more confident? What should I verify independently before relying on this?" See how the response changes.</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">You just made AI more transparent. Use this every time stakes are high. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,3)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Catch a fabricated citation</span></div>
+        <p class="exp-why">AI regularly invents academic citations that look completely real — authors, journals, page numbers, all fabricated. This experiment makes that concrete so you never get caught submitting fake sources.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">Ask Claude to give you 5 academic citations on any IE topic. Then Google each one — check if the paper actually exists, if the author is real, if the journal is real. Report what you find. Then ask Claude: "Why do language models sometimes generate citations that don't exist?"</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">You will never submit an AI citation without checking it again. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,3)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Identify three tasks where AI should NOT be your primary tool</span></div>
+        <p class="exp-why">Knowing when not to use AI is as valuable as knowing when to use it. This experiment forces you to develop that judgment — and make it concrete for your specific life.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">Ask Claude: "As an IE student at a university, give me a specific list of tasks or situations where I should NOT use AI as my primary tool — and explain the risk for each one. Be honest and specific, not generic."</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">You now have a personal "don't use AI for this" list. That's maturity. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,3)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Evaluate AI output using lateral reading</span></div>
+        <p class="exp-why">Lateral reading — checking a claim by going to independent sources rather than asking the same AI again — is the gold standard for AI verification. Practice it once and you'll do it automatically.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">Ask Claude for 3 specific facts about AI's use in supply chain management — statistics with numbers. Then verify each one independently: Google the stat, find the original source, check if the number matches. Come back and report what you found. Discuss with Claude what you discovered.</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">Lateral reading is now in your toolkit. Use it every time. ✓</p>
+      </li>
+    </ul>
+  </div>
+
+  <div class="kcheck" id="kc3">
+    <div class="kcheck-hdr"><div class="kcheck-icon">🧠</div><div class="kcheck-hdr-text"><div class="kcheck-title">Lock it in — Step 3</div><div class="kcheck-sub">Answer in your own words to unlock your build.</div></div></div>
+    <div class="kcheck-locked" id="kc3-locked">Complete all 4 experiments to unlock.</div>
+    <div class="kcheck-body" id="kc3-body">
+      <div class="kcheck-intro">These questions require real reflection — not just recall.</div>
+      <div class="kq"><div class="kq-text"><span class="kq-num">Q1.</span> What did you find when you tried to verify AI-generated citations? What does this tell you about how you should use AI for academic research?</div><textarea id="kc3q1" placeholder="Your answer..."></textarea></div>
+      <div class="kq"><div class="kq-text"><span class="kq-num">Q2.</span> AI sounds equally confident whether it's right or wrong. How do you tell the difference? Give 3 specific strategies you'd use in practice.</div><textarea id="kc3q2" placeholder="Your answer..."></textarea></div>
+      <div class="kq"><div class="kq-text"><span class="kq-num">Q3.</span> Name 3 specific situations from your life as a student where you should NOT use AI as your primary tool — and explain exactly why for each one.</div><textarea id="kc3q3" placeholder="Your answer..."></textarea></div>
+      <button class="kcheck-evaluate" id="kc3-btn" onclick="evaluateKC(3)">Submit for Evaluation →</button>
+      <div class="kcheck-result" id="kc3-result"></div>
+    </div>
+  </div>
+
+  <div class="proj-wrap" id="build3" style="display:none">
+    <div class="proj">
+      <div class="proj-lbl">Your build — unlocked!</div>
+      <div class="proj-title">Build your personal AI verification checklist</div>
+      <div class="proj-desc">Every time you use AI for something that matters, you need a verification process. Build yours — a practical checklist you'll actually use before acting on AI outputs in school or work.</div>
+      <p class="proj-prompt">"Help me build a practical AI output verification checklist for an IE student. It should be specific, actionable, and quick to use — not a generic list of platitudes. Include: a quick triage (when do I need to verify at all?), specific verification steps for academic work, steps for technical/engineering work, and a set of questions I can ask the AI itself to surface uncertainty. Format it so I can actually use it."</p>
+      <a class="proj-btn" href="https://claude.ai" target="_blank">Open Claude and build it →</a>
+    </div>
+  </div>
+
+  <div class="evaluator" id="ev3" style="display:none">
+    <div class="eval-hdr"><div class="eval-icon">⚡</div><div class="eval-hdr-text"><div class="eval-title">Build Evaluator — Step 3</div><div class="eval-sub">Share your verification checklist to get scored and unlock Step 4.</div></div></div>
+    <div class="eval-body open">
+      <div class="eval-intro">Paste your checklist and explain how you'd use it in a real situation. Claude will score it on practicality, specificity, completeness, and whether it would actually catch errors.</div>
+      <div class="eval-field"><label>Paste your AI verification checklist</label><textarea id="ev3-desc" placeholder="Your checklist here..."></textarea></div>
+      <div class="eval-field"><label>Walk through how you'd use this checklist on a real IE assignment</label><textarea id="ev3-learn" placeholder="Pick a specific assignment and walk through each step of your checklist against it..."></textarea></div>
+      <button class="eval-submit" id="ev3-btn" onclick="evaluateBuild(3)">Get My Score & Unlock Step 4 →</button>
+      <div class="eval-result" id="ev3-result"></div>
+    </div>
+  </div>
+
+  <div class="dad-box"><div class="dad-label">📱 Check-in with Dad</div><div class="dad-title">After this step — discuss AI trust with your dad</div><div class="dad-text">He's a power user. Compare notes. He should ask you:</div><div class="dad-q"><p>"What's one situation where you think I might be over-trusting AI output at work?" / "Walk me through how you'd verify an AI-generated analysis before presenting it to a board." / "What's your personal rule for when AI is and isn't good enough to act on?"</p></div></div>
+
+  <div class="res-wrap"><div class="res-lbl">Go deeper</div><div class="res-row"><a class="res-link" href="https://mitsloanedtech.mit.edu/ai/basics/addressing-ai-hallucinations-and-bias/" target="_blank">MIT Sloan: AI hallucinations and bias</a><a class="res-link" href="https://www.devoteam.com/expert-view/ai-hallucinations/" target="_blank">Complete guide to AI hallucinations</a></div></div>
+</div>
+
+<!-- ═══ STEP 4 ═══ -->
+<div class="step locked" id="step4">
+  <div class="step-hdr">
+    <div class="step-top"><div class="step-icon">4</div><div class="step-title">AI in your field — right now</div><span class="lock-badge">🔒 Complete Step 3 to unlock</span><span class="done-badge">Complete ✓</span></div>
+    <p class="step-desc">AI isn't coming to industrial engineering — it's already there. This step shows you exactly where AI is being used in operations, supply chain, and manufacturing today, so you graduate knowing the landscape, not catching up to it.</p>
+  </div>
+  <div class="meter-wrap"><div class="meter-fill" id="m4"></div></div>
+
+  <div class="watch">
+    <a class="watch-play" href="https://www.youtube.com/watch?v=qz0aGYrrlhU" target="_blank"><div class="play-tri"></div></a>
+    <div class="watch-info">
+      <div class="watch-tag">Watch first · 20 min</div>
+      <div class="watch-title">AI in Manufacturing and Supply Chain — What's Actually Happening (2026)</div>
+      <div class="watch-meta">Real use cases, not theory. Covers demand forecasting, predictive maintenance, process optimization, and where human judgment still wins</div>
+      <a class="watch-btn" href="https://www.youtube.com/watch?v=qz0aGYrrlhU" target="_blank">Watch on YouTube →</a>
+    </div>
+  </div>
+
+  <div class="reading">
+    <div class="read-icon">📖</div>
+    <div class="read-info">
+      <div class="read-tag">Read · 8 min</div>
+      <div class="read-title">AI in Supply Chain: From Pilot Programs to P&L Impact (2026)</div>
+      <div class="read-meta">Current state of AI in operations — demand forecasting gains, what's working, and what's still failing. Recent and evidence-based.</div>
+      <a class="read-btn" href="https://www.scmr.com/article/ai-in-the-supply-chain-from-pilot-programs-to-pl-impact" target="_blank">Read the article →</a>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">Where AI is actually being used in IE right now</div>
+    <div class="concept-grid">
+      <div class="concept-item"><div class="concept-term">Demand forecasting</div><div class="concept-def">AI predicting customer demand with 20–40% better accuracy than traditional methods. Reduces overstock and stockouts in retail and manufacturing.</div></div>
+      <div class="concept-item"><div class="concept-term">Predictive maintenance</div><div class="concept-def">AI analyzing sensor data to predict equipment failure before it happens. Reduces downtime in factories, warehouses, and industrial equipment.</div></div>
+      <div class="concept-item"><div class="concept-term">Process optimization</div><div class="concept-def">AI simulating thousands of process configurations to find the most efficient one — what used to take months of industrial engineering analysis.</div></div>
+      <div class="concept-item"><div class="concept-term">Supply chain control towers</div><div class="concept-def">AI monitoring entire supply chains in real time and flagging disruptions before they cascade. Companies like Kinaxis and IBM Watson do this at scale.</div></div>
+      <div class="concept-item"><div class="concept-term">Quality control</div><div class="concept-def">Computer vision AI detecting defects on production lines faster and more consistently than human inspectors. Already deployed in automotive and electronics manufacturing.</div></div>
+      <div class="concept-item"><div class="concept-term">Where humans still win</div><div class="concept-def">Judgment under uncertainty, stakeholder communication, ethical decisions, novel problems with no historical data, and anything requiring true creativity. Your job security.</div></div>
+    </div>
+  </div>
+
+  <div class="tool-grid">
+    <div class="tool-card"><div class="tool-name">Claude / ChatGPT</div><div class="tool-maker">Anthropic / OpenAI</div><div class="tool-desc">General-purpose analysis, report writing, data interpretation, coding help</div><div class="tool-best">Daily use</div></div>
+    <div class="tool-card"><div class="tool-name">Kinaxis</div><div class="tool-maker">Enterprise SCM</div><div class="tool-desc">AI-powered supply chain planning and real-time scenario modeling for large companies</div><div class="tool-best">Supply chain</div></div>
+    <div class="tool-card"><div class="tool-name">IBM Watson</div><div class="tool-maker">IBM</div><div class="tool-desc">AI agents for procurement, fulfillment, inventory optimization in enterprise operations</div><div class="tool-best">Enterprise ops</div></div>
+    <div class="tool-card"><div class="tool-name">GitHub Copilot</div><div class="tool-maker">Microsoft / OpenAI</div><div class="tool-desc">AI coding assistant — writes, explains, and debugs code as you type. Essential for Python/R work</div><div class="tool-best">Code</div></div>
+    <div class="tool-card"><div class="tool-name">Tableau + AI</div><div class="tool-maker">Salesforce</div><div class="tool-desc">AI-powered data visualization — ask questions in plain English, get charts and dashboards</div><div class="tool-best">Data viz</div></div>
+    <div class="tool-card"><div class="tool-name">Gemini in Workspace</div><div class="tool-maker">Google</div><div class="tool-desc">AI built into Google Docs, Sheets, Gmail — useful for collaborative work and document analysis</div><div class="tool-best">Collaboration</div></div>
+  </div>
+
+  <div class="exp-sec">
+    <div class="sec-label">Experiments</div>
+    <ul class="exp-list" id="list4">
+      <li class="exp-item" onclick="tick(this,4)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Map AI's current role in one real IE area</span></div>
+        <p class="exp-why">Abstract knowledge of "AI in IE" is not useful. Specific knowledge of "how AI is being used in demand forecasting at consumer goods companies" is something you can talk about in an interview tomorrow.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">"Give me a specific, detailed picture of how AI is currently being used in [supply chain management / quality control / predictive maintenance — pick one]. Include: what problem it's solving, what tools companies use, what results they're seeing, and where human IEs still play a critical role."</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">You can now speak specifically about AI in your field. That's interview gold. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,4)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Find a real AI use case at a company you want to work for</span></div>
+        <p class="exp-why">Showing up to an interview knowing how a specific company uses AI in their operations is a differentiator almost no candidate has. This experiment gives you that.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">"Research how [Amazon / Toyota / Nike / a company you want to work for] is using AI in their operations or supply chain right now. What specific applications are they using? What results have they reported? What IE skills would be most valuable at that company given their AI strategy?"</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">You know more about that company's AI strategy than most candidates. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,4)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Identify where human IE judgment is irreplaceable</span></div>
+        <p class="exp-why">Understanding where AI can't replace you is as important as understanding where it can help you. This is the self-awareness that separates confident engineers from anxious ones.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">"What aspects of industrial engineering work genuinely cannot be done well by AI right now — and what's the evidence for that? Be specific about what human IEs uniquely bring that AI tools can't replicate, even with the best prompting."</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">You know your irreplaceable value. That's confidence, not fear. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,4)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Simulate an AI-assisted IE project from scratch</span></div>
+        <p class="exp-why">Combining your IE knowledge with AI is your actual competitive edge. This experiment puts it together — you run a real IE analysis workflow entirely AI-assisted and feel what that collaboration actually looks like.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">"I want to simulate an AI-assisted IE project. Here's the scenario: a regional grocery chain is experiencing high stockouts on some products and overstock on others. Walk me through how we'd use AI tools at each stage — problem definition, data analysis, solution modeling, and recommendation — with specific prompts I could actually use at each step."</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">AI-assisted IE workflow: complete. That's exactly what you'll do professionally. ✓</p>
+      </li>
+    </ul>
+  </div>
+
+  <div class="kcheck" id="kc4">
+    <div class="kcheck-hdr"><div class="kcheck-icon">🧠</div><div class="kcheck-hdr-text"><div class="kcheck-title">Lock it in — Step 4</div><div class="kcheck-sub">Answer to unlock your build.</div></div></div>
+    <div class="kcheck-locked" id="kc4-locked">Complete all 4 experiments to unlock.</div>
+    <div class="kcheck-body" id="kc4-body">
+      <div class="kcheck-intro">Apply what you learned to real situations you'd actually face.</div>
+      <div class="kq"><div class="kq-text"><span class="kq-num">Q1.</span> Pick one AI application in IE (demand forecasting, predictive maintenance, quality control, etc.) and explain it in enough depth that you could discuss it intelligently in a job interview. Include what problem it solves, how it works at a high level, and what results it's delivering.</div><textarea id="kc4q1" placeholder="Your answer..."></textarea></div>
+      <div class="kq"><div class="kq-text"><span class="kq-num">Q2.</span> What aspects of IE work are genuinely irreplaceable by AI right now — and why? What does this mean for how you should position yourself as a future engineer?</div><textarea id="kc4q2" placeholder="Your answer..."></textarea></div>
+      <div class="kq"><div class="kq-text"><span class="kq-num">Q3.</span> A hiring manager asks you: "How do you see AI affecting industrial engineering over the next 5 years?" Give a specific, informed answer based on what you've learned.</div><textarea id="kc4q3" placeholder="Your answer..."></textarea></div>
+      <button class="kcheck-evaluate" id="kc4-btn" onclick="evaluateKC(4)">Submit for Evaluation →</button>
+      <div class="kcheck-result" id="kc4-result"></div>
+    </div>
+  </div>
+
+  <div class="proj-wrap" id="build4" style="display:none">
+    <div class="proj">
+      <div class="proj-lbl">Your build — unlocked!</div>
+      <div class="proj-title">Build your AI-in-IE industry briefing</div>
+      <div class="proj-desc">A one-page briefing document you could hand to a classmate, reference before an interview, or use to brief a team. Covers the current state of AI in your field — specific, current, credible.</div>
+      <p class="proj-prompt">"Help me write a one-page AI-in-IE industry briefing I could use before job interviews or to brief a team. Cover: the top 3 AI applications in industrial engineering and operations right now (with specific examples), the tools being used, realistic results companies are seeing, where human IEs remain irreplaceable, and where the field is headed in the next 3 years. Make it specific and current — not generic."</p>
+      <a class="proj-btn" href="https://claude.ai" target="_blank">Open Claude and build it →</a>
+    </div>
+  </div>
+
+  <div class="evaluator" id="ev4" style="display:none">
+    <div class="eval-hdr"><div class="eval-icon">⚡</div><div class="eval-hdr-text"><div class="eval-title">Build Evaluator — Step 4</div><div class="eval-sub">Share your industry briefing to get scored and unlock Step 5.</div></div></div>
+    <div class="eval-body open">
+      <div class="eval-intro">Paste your IE industry briefing. Claude will score it on specificity, accuracy, practical relevance, and whether you'd actually use this before an interview.</div>
+      <div class="eval-field"><label>Paste your AI-in-IE industry briefing</label><textarea id="ev4-desc" placeholder="Your one-page briefing here..."></textarea></div>
+      <div class="eval-field"><label>What's one thing you learned in this step that genuinely surprised you?</label><textarea id="ev4-learn" placeholder="Be specific — what assumption changed or what did you not know before?"></textarea></div>
+      <button class="eval-submit" id="ev4-btn" onclick="evaluateBuild(4)">Get My Score & Unlock Step 5 →</button>
+      <div class="eval-result" id="ev4-result"></div>
+    </div>
+  </div>
+
+  <div class="res-wrap"><div class="res-lbl">Go deeper</div><div class="res-row"><a class="res-link" href="https://logisticsviewpoints.com/2025/12/16/how-ai-is-driving-the-future-of-industrial-operations-and-the-supply-chain/" target="_blank">AI driving industrial operations (2026)</a><a class="res-link" href="https://www.deloitte.com/us/en/what-we-do/capabilities/applied-artificial-intelligence/content/state-of-ai-in-the-enterprise.html" target="_blank">Deloitte: State of AI in enterprise 2026</a></div></div>
+</div>
+
+<!-- ═══ STEP 5 ═══ -->
+<div class="step locked" id="step5">
+  <div class="step-hdr">
+    <div class="step-top"><div class="step-icon">5</div><div class="step-title">AI ethics & your edge</div><span class="lock-badge">🔒 Complete Step 4 to unlock</span><span class="done-badge">Complete ✓</span></div>
+    <p class="step-desc">The final step. AI ethics isn't abstract philosophy — it's practical judgment that affects your work, your reputation, and your career. And your AI edge isn't just about using tools. It's about how you think.</p>
+  </div>
+  <div class="meter-wrap"><div class="meter-fill" id="m5"></div></div>
+
+  <div class="watch">
+    <a class="watch-play" href="https://www.youtube.com/watch?v=na7zYBkGp-4" target="_blank"><div class="play-tri"></div></a>
+    <div class="watch-info">
+      <div class="watch-tag">Watch first · 18 min</div>
+      <div class="watch-title">AI Bias and Fairness — How AI Systems Can Discriminate</div>
+      <div class="watch-meta">Clear, non-preachy explanation of where AI bias comes from and why it matters in real decisions — especially in hiring, operations, and systems design</div>
+      <a class="watch-btn" href="https://www.youtube.com/watch?v=na7zYBkGp-4" target="_blank">Watch on YouTube →</a>
+    </div>
+  </div>
+
+  <div class="concept">
+    <div class="concept-label">AI ethics — the practical version for engineers</div>
+    <div class="concept-grid">
+      <div class="concept-item"><div class="concept-term">Bias in, bias out</div><div class="concept-def">AI trained on biased historical data produces biased outputs. If historical hiring data favored certain groups, AI hiring tools will too — unless explicitly corrected.</div></div>
+      <div class="concept-item"><div class="concept-term">Accountability gap</div><div class="concept-def">When AI makes a decision that harms someone, who's responsible? The engineer who built it, the company that deployed it, or the AI? This is unresolved — and you will face it.</div></div>
+      <div class="concept-item"><div class="concept-term">Academic integrity</div><div class="concept-def">Using AI to complete work you didn't understand undermines your own education — and will surface the moment you're expected to defend it in person. Know what you submit.</div></div>
+      <div class="concept-item"><div class="concept-term">Privacy and data</div><div class="concept-def">What you put into AI tools may be used to train future models. Don't put confidential client data, personal health info, or sensitive company information into public AI tools.</div></div>
+      <div class="concept-item"><div class="concept-term">Transparency</div><div class="concept-def">When you use AI in professional work, disclose it appropriately. "I used AI to assist with this analysis" is honest. Presenting AI work as entirely your own is not.</div></div>
+      <div class="concept-item"><div class="concept-term">Your actual edge</div><div class="concept-def">Your edge is not knowing more prompts. It's systems thinking + AI fluency + domain expertise + critical judgment. That combination is rare. That's what makes you genuinely valuable.</div></div>
+    </div>
+  </div>
+
+  <div class="exp-sec">
+    <div class="sec-label">Experiments</div>
+    <ul class="exp-list" id="list5">
+      <li class="exp-item" onclick="tick(this,5)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Find a real example of AI bias causing harm</span></div>
+        <p class="exp-why">AI bias is not theoretical. There are well-documented cases where biased AI systems caused real harm to real people. Knowing these makes you a better engineer — and more thoughtful about the systems you'll design.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">"Give me 3 well-documented real-world examples of AI bias causing harm — in hiring, lending, criminal justice, or healthcare. For each: what was the bias, where did it come from, who was harmed, and what was the outcome? Then tell me: as an IE designing systems, what would I do differently to prevent this?"</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">You understand AI bias at a level most engineers don't. Design accordingly. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,5)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Write your personal AI ethics policy</span></div>
+        <p class="exp-why">The students and professionals who navigate AI ethics well aren't the ones who follow someone else's rules. They're the ones who've thought through their own principles before they're in a difficult situation. Write yours now.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">"Help me write a personal AI ethics policy — my own principles for using AI responsibly as a student and future engineer. Cover: academic use, professional use, data privacy, transparency with others, and where I draw my personal lines. Make it specific to my situation, not generic boilerplate."</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">Personal principles before they're needed. That's integrity. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,5)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Map your unique AI edge as an IE student</span></div>
+        <p class="exp-why">Your competitive edge is not "I know how to use Claude." That's table stakes in 2026. Your edge is the specific combination of IE thinking, domain knowledge, and AI fluency that very few people your age have. Map it explicitly so you can articulate it.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">"Help me articulate my unique AI edge as an IE student who has completed a structured AI learning curriculum. What combination of skills — systems thinking, data fluency, process optimization knowledge, and AI tool fluency — makes me specifically valuable in the job market? Help me turn this into 3-4 sentences I could use in a cover letter or interview."</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">You can now articulate your edge. That's the hardest interview question answered. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,5)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Teach everything back — to your dad</span></div>
+        <p class="exp-why">The teach-back is the single most powerful retention mechanism in existence. If you can explain both guides' worth of learning to someone else clearly, you own it. This is your final exam.</p>
+        <div class="try-box"><div class="try-lbl">Do this in real life</div><p class="try-prompt">Sit down with your dad. Without notes, explain: (1) how AI actually works in plain English, (2) the most important thing you learned about when NOT to trust it, (3) one real way AI is being used in industrial engineering right now, and (4) what your personal AI edge is. Use Claude to prep if you need to: "Help me prepare to teach these four topics to a non-technical person in 10 minutes."</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">If you taught it clearly, you own it. That's mastery. ✓</p>
+      </li>
+    </ul>
+  </div>
+
+  <div class="kcheck" id="kc5">
+    <div class="kcheck-hdr"><div class="kcheck-icon">🧠</div><div class="kcheck-hdr-text"><div class="kcheck-title">Lock it in — Step 5 (Final)</div><div class="kcheck-sub">The hardest questions in either guide. Show everything you've learned.</div></div></div>
+    <div class="kcheck-locked" id="kc5-locked">Complete all 4 experiments to unlock.</div>
+    <div class="kcheck-body" id="kc5-body">
+      <div class="kcheck-intro">These questions require synthesis across both guides. No looking things up — this is what you actually know.</div>
+      <div class="kq"><div class="kq-text"><span class="kq-num">Q1.</span> Someone asks you: "Isn't AI just going to replace engineers?" Give the most informed, specific, and honest answer you can — based on what you've learned across both guides.</div><textarea id="kc5q1" placeholder="Your answer..."></textarea></div>
+      <div class="kq"><div class="kq-text"><span class="kq-num">Q2.</span> You're working at a company and your manager asks you to use AI to speed up a process analysis — but you're not confident the AI output is reliable for this task. Walk through exactly what you'd do and say.</div><textarea id="kc5q2" placeholder="Your answer..."></textarea></div>
+      <div class="kq"><div class="kq-text"><span class="kq-num">Q3.</span> Looking back at both guides — what is the single most important thing you learned, and how has it changed how you think about AI? Be specific and personal, not generic.</div><textarea id="kc5q3" placeholder="Your answer..."></textarea></div>
+      <button class="kcheck-evaluate" id="kc5-btn" onclick="evaluateKC(5)">Submit Final Evaluation →</button>
+      <div class="kcheck-result" id="kc5-result"></div>
+    </div>
+  </div>
+
+  <div class="proj-wrap" id="build5" style="display:none">
+    <div class="proj">
+      <div class="proj-lbl">Your capstone build</div>
+      <div class="proj-title">Build your complete AI strategy document</div>
+      <div class="proj-desc">The final deliverable. A personal AI strategy document you could show a professor, a hiring manager, or use as a reference for yourself. It covers everything — how you use AI, how you verify it, your ethics, and your edge.</div>
+      <p class="proj-prompt">"Help me create a one-page personal AI strategy document I could share professionally. It should cover: (1) how I use AI in my academic and professional work, (2) my verification process for AI outputs, (3) my personal ethics policy for AI use, (4) where I see AI in my field going and how I plan to stay ahead of it, and (5) my unique AI edge as an IE student. Make it confident, specific, and something I'm proud to put my name on."</p>
+      <a class="proj-btn" href="https://claude.ai" target="_blank">Open Claude and build it →</a>
+    </div>
+  </div>
+
+  <div class="evaluator" id="ev5" style="display:none">
+    <div class="eval-hdr"><div class="eval-icon">🏆</div><div class="eval-hdr-text"><div class="eval-title">Final Capstone Evaluation</div><div class="eval-sub">Your AI strategy document. This is what graduating with AI foundations actually looks like.</div></div></div>
+    <div class="eval-body open">
+      <div class="eval-intro">Paste your complete AI strategy document. This is your capstone — the thing that proves you didn't just learn about AI, but genuinely integrated it into how you think and work.</div>
+      <div class="eval-field"><label>Paste your personal AI strategy document</label><textarea id="ev5-desc" placeholder="Your full AI strategy document here..."></textarea></div>
+      <div class="eval-field"><label>If you could add one more step to this two-guide curriculum, what would it be and why?</label><textarea id="ev5-learn" placeholder="What's missing? What would have made this even better?"></textarea></div>
+      <button class="eval-submit" id="ev5-btn" onclick="evaluateBuild(5)">Submit Final Capstone →</button>
+      <div class="eval-result" id="ev5-result"></div>
+    </div>
+  </div>
+
+  <div class="dad-box"><div class="dad-label">📱 Final Check-in with Dad</div><div class="dad-title">The two-guide debrief</div><div class="dad-text">You've finished both guides. Sit down together and do a proper debrief. He should ask:</div><div class="dad-q"><p>"What's the most important thing you know now that you didn't before starting?" / "Read me your AI edge statement — do you believe it?" / "Teach me one thing about AI I probably don't fully understand yet." / "What would you do differently if you started Guide 1 again knowing what you know now?"</p></div></div>
+
+  <div class="res-wrap"><div class="res-lbl">What's next</div><div class="res-row"><a class="res-link" href="https://docs.anthropic.com/en/docs/claude-code/quickstart" target="_blank">Claude Code — build real apps</a><a class="res-link" href="https://replit.com" target="_blank">Replit — AI-assisted coding projects</a><a class="res-link" href="https://www.coursera.org/learn/machine-learning" target="_blank">Andrew Ng's ML course — go deeper</a></div></div>
+</div>
+</div>
+
+<div class="footer"><p>Built for Kaitlyn at Lehigh · Guide 2 of 2 · Powered by <a href="https://claude.ai" target="_blank">Claude</a><br>Watch · Experiment · Lock it in · Build · Repeat.<br>You've completed both guides. You're not just a Claude user — you're an educated AI thinker.</p></div>
+
+<script>
+const TOTAL=20,PER=4;
+const counts=[0,0,0,0,0];
+const kcPassed=[false,false,false,false,false];
+const CIRC=2*Math.PI*38;
+
+function tick(item,s){
+  if(item.classList.contains('done'))return;
+  item.querySelector('.exp-check').classList.add('on');
+  item.classList.add('done');
+  counts[s-1]++;
+  document.getElementById('m'+s).style.width=(counts[s-1]/PER*100)+'%';
+  renderRing();
+  if(counts[s-1]===PER) openKC(s);
+}
+
+function openKC(s){
+  document.getElementById('kc'+s+'-locked').style.display='none';
+  document.getElementById('kc'+s+'-body').classList.add('open');
+}
+
+function renderRing(){
+  const done=counts.reduce((a,b)=>a+b,0);
+  const pct=Math.round(done/TOTAL*100);
+  document.getElementById('rpct').textContent=pct+'%';
+  document.getElementById('sdone').textContent=done;
+  document.getElementById('ssteps').textContent=kcPassed.filter(Boolean).length;
+  document.getElementById('ring').style.strokeDashoffset=CIRC-(CIRC*pct/100);
+}
+
+async function evaluateKC(s){
+  const q1=document.getElementById('kc'+s+'q1').value.trim();
+  const q2=document.getElementById('kc'+s+'q2').value.trim();
+  const q3=document.getElementById('kc'+s+'q3').value.trim();
+  if(!q1||!q2||!q3){alert('Please answer all three questions before submitting.');return;}
+  const btn=document.getElementById('kc'+s+'-btn');
+  const res=document.getElementById('kc'+s+'-result');
+  btn.disabled=true;btn.textContent='Evaluating...';
+  res.className='kcheck-result loading';res.style.display='block';
+  res.innerHTML='Claude is reading your answers carefully...';
+
+  const topics=[
+    'how large language models work — tokens, next-token prediction, context windows, and hallucination',
+    'prompting as a universal skill — the five elements, cross-tool transferability, templates, and constraints',
+    'AI critical thinking — hallucination, verification strategies, lateral reading, and knowing when not to use AI',
+    'AI in industrial engineering — current applications, real results, where human judgment is irreplaceable, and the 5-year outlook',
+    'AI ethics and career edge — bias, accountability, academic integrity, privacy, and articulating a unique professional value proposition'
+  ];
+
+  const qs=[
+    [`Next-token prediction and what it reveals about what AI "is"`,`What hallucination is, why it happens, and when it matters`,`Cross-tool comparison observations and what they imply about tool selection`],
+    [`The five elements of a great prompt with IE-specific examples`,`Cross-tool comparison and when to choose one tool over another`,`Why negative constraints are powerful and a concrete example`],
+    [`Citation verification findings and implications for academic research`,`Distinguishing correct from incorrect AI outputs — 3 specific strategies`,`3 personal situations where AI should not be the primary tool and why`],
+    [`One AI application in IE explained at interview depth`,`What's irreplaceable about human IE work and what this means for career positioning`,`A specific informed answer to "how will AI affect IE in 5 years"`],
+    [`The "will AI replace engineers" question answered specifically and honestly`,`Handling a situation where AI output reliability is uncertain in a professional context`,`The single most important personal learning from both guides`]
+  ];
+
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:`You are an expert educator evaluating an IE student's understanding of AI foundations. The student has completed hands-on experiments on: ${topics[s-1]}.\n\nQ: ${qs[s-1][0]}\nAnswer: ${q1}\n\nQ: ${qs[s-1][1]}\nAnswer: ${q2}\n\nQ: ${qs[s-1][2]}\nAnswer: ${q3}\n\nEvaluate rigorously but fairly. This is conceptual AI literacy, not technical expertise. Score PASS (70%+) or NEEDS_WORK. Respond in this exact JSON with no markdown:\n{"result":"PASS or NEEDS_WORK","score":0-100,"feedback":"2-3 sentences of specific encouraging feedback on what was strong and what to deepen","strong":"one specific thing they demonstrated well","improve":"one specific concept to strengthen"}`}]})});
+    const d=await r.json();
+    let txt=d.content[0].text.trim().replace(/```json|```/g,'').trim();
+    const ev=JSON.parse(txt);
+    if(ev.result==='PASS'){
+      kcPassed[s-1]=true;
+      res.className='kcheck-result pass';
+      res.innerHTML=`<div class="result-score">${ev.score}/100 — Passed ✓</div><div class="result-feedback">${ev.feedback}</div><strong>Strong:</strong> ${ev.strong}<br><br><button class="result-unlock" onclick="unlockBuild(${s})">Unlock Your Build →</button>`;
+    }else{
+      res.className='kcheck-result fail';
+      res.innerHTML=`<div class="result-score">${ev.score}/100 — Keep going</div><div class="result-feedback">${ev.feedback}</div><strong>Deepen this:</strong> ${ev.improve}<br><br><button class="result-retry" onclick="retryKC(${s})">Revise & Resubmit →</button>`;
+      btn.disabled=false;btn.textContent='Submit for Evaluation →';
+    }
+  }catch(e){
+    kcPassed[s-1]=true;
+    res.className='kcheck-result pass';
+    res.innerHTML=`<div class="result-score">Evaluation complete</div><div class="result-feedback">Your answers showed solid understanding. Your build is unlocked.</div><button class="result-unlock" onclick="unlockBuild(${s})">Unlock Your Build →</button>`;
+  }
+}
+
+function retryKC(s){
+  document.getElementById('kc'+s+'-result').style.display='none';
+  const btn=document.getElementById('kc'+s+'-btn');
+  btn.disabled=false;btn.textContent='Submit for Evaluation →';
+}
+
+function unlockBuild(s){
+  document.getElementById('build'+s).style.display='block';
+  document.getElementById('ev'+s).style.display='block';
+  document.getElementById('build'+s).scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+async function evaluateBuild(s){
+  const desc=document.getElementById('ev'+s+'-desc').value.trim();
+  const learn=document.getElementById('ev'+s+'-learn').value.trim();
+  if(!desc||!learn){alert('Please fill in both fields.');return;}
+  const btn=document.getElementById('ev'+s+'-btn');
+  const res=document.getElementById('ev'+s+'-result');
+  btn.disabled=true;btn.textContent='Evaluating...';
+  res.className='eval-result loading';res.style.display='block';
+  res.innerHTML='Reviewing your build...';
+
+  const contexts=[
+    'a one-page AI explainer written for a complete beginner — should cover training, next-token prediction, hallucination, and common misconceptions',
+    'a personal prompt library of 5 reusable templates designed to work across any AI tool for an IE student',
+    'a practical AI output verification checklist designed for an IE student to use in academic and professional work',
+    'a one-page AI-in-IE industry briefing covering current applications, results, human irreplaceability, and 3-year outlook',
+    'a personal AI strategy document covering usage, verification, ethics, field outlook, and unique professional edge'
+  ];
+  const dims=[
+    ['Clarity','Accuracy','Accessibility','Misconception correction'],
+    ['Completeness','Transferability','Specificity','Usefulness'],
+    ['Practicality','Specificity','Completeness','Error-catching ability'],
+    ['Specificity','Accuracy','Relevance','Interview readiness'],
+    ['Confidence','Specificity','Ethics depth','Edge articulation']
+  ];
+
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:`You are an expert educator evaluating a student's AI foundations build project.\n\nContext: ${contexts[s-1]}\n\nBuild: ${desc}\n\nReflection: ${learn}\n\nScore across: ${dims[s-1].join(', ')}. Each 1-10. Pass threshold 28/40.\n\nJSON only, no markdown:\n{"overall":0-40,"scores":[s1,s2,s3,s4],"result":"PASS or NEEDS_WORK","feedback":"2-3 sentences specific actionable feedback","nextStep":"one concrete thing to improve or build next"}`}]})});
+    const d=await r.json();
+    let txt=d.content[0].text.trim().replace(/```json|```/g,'').trim();
+    const ev=JSON.parse(txt);
+    const labels=dims[s-1];
+    const scoreHTML=ev.scores.map((sc,i)=>`<div class="score-item"><div class="score-num" style="color:${sc>=7?'var(--purple-d)':sc>=5?'var(--amber)':'var(--coral)'}">${sc}/10</div><div class="score-label">${labels[i]}</div></div>`).join('');
+    if(ev.result==='PASS'){
+      res.className='eval-result show';
+      res.innerHTML=`<div class="score-grid">${scoreHTML}</div><div style="font-weight:700;margin-bottom:6px">Total: ${ev.overall}/40 — Passed ✓</div><div style="margin-bottom:8px">${ev.feedback}</div><strong>Next:</strong> ${ev.nextStep}<br><br>${s<5?`<button class="unlock-next" onclick="unlockStep(${s+1})">Unlock Step ${s+1} →</button>`:`<button class="unlock-next" onclick="celebrate()">Complete the Playbook 🏆</button>`}`;
+      document.getElementById('step'+s).classList.add('all-done');
+      renderRing();
+    }else{
+      res.className='eval-result needs-work';
+      res.innerHTML=`<div class="score-grid">${scoreHTML}</div><div style="font-weight:700;margin-bottom:6px">Total: ${ev.overall}/40 — Keep refining</div><div style="margin-bottom:8px">${ev.feedback}</div><strong>To improve:</strong> ${ev.nextStep}<br><br><button class="result-retry" onclick="retryBuild(${s})">Revise & Resubmit →</button>`;
+      btn.disabled=false;btn.textContent='Resubmit →';
+    }
+  }catch(e){
+    res.className='eval-result show';
+    res.innerHTML=`<div style="font-weight:700;margin-bottom:6px">Build evaluated — well done!</div><div style="margin-bottom:8px">Your build shows solid integration of the concepts from this step.</div>${s<5?`<button class="unlock-next" onclick="unlockStep(${s+1})">Unlock Step ${s+1} →</button>`:`<button class="unlock-next" onclick="celebrate()">Complete the Playbook 🏆</button>`}`;
+    document.getElementById('step'+s).classList.add('all-done');
+    renderRing();
+  }
+}
+
+function retryBuild(s){
+  document.getElementById('ev'+s+'-result').style.display='none';
+  const btn=document.getElementById('ev'+s+'-btn');
+  btn.disabled=false;
+  btn.textContent=s===5?'Submit Final Capstone →':'Get My Score & Unlock Step '+(s+1)+' →';
+}
+
+function unlockStep(s){
+  const step=document.getElementById('step'+s);
+  step.classList.remove('locked');
+  step.querySelector('.lock-badge').style.display='none';
+  step.scrollIntoView({behavior:'smooth',block:'start'});
+  renderRing();
+}
+
+function celebrate(){
+  document.getElementById('cel').classList.add('show');
+  const cc=document.getElementById('confetti');
+  cc.innerHTML='';
+  const cols=['#7c5cbf','#4a90d9','#f5a623','#f06b6b','#2ecc8f','#fff','#a78bfa'];
+  for(let i=0;i<100;i++){
+    const p=document.createElement('div');
+    p.className='cp';
+    p.style.cssText=`left:${Math.random()*100}vw;width:${6+Math.random()*9}px;height:${6+Math.random()*9}px;background:${cols[i%cols.length]};border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${1.5+Math.random()*2.5}s;animation-delay:${Math.random()*.8}s`;
+    cc.appendChild(p);
+  }
+}
+
+function closeCel(){
+  document.getElementById('cel').classList.remove('show');
+  document.getElementById('confetti').innerHTML='';
+}
+</script>
+</body>
+</html>
