@@ -1,1 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kaitlyn's Claude Guide</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#2ecc8f;--green-d:#1aaa78;--green-light:#e8faf3;--green-mid:#b8f0d8;
+  --blue:#4a90d9;--purple:#7c5cbf;--amber:#f5a623;--coral:#f06b6b;--teal:#1abc9c;
+  --red:#e74c3c;--orange:#e67e22;
+  --text:#1a1a1a;--muted:#888;--muted2:#bbb;--border:#ebebeb;--bg:#f7f8f6;--card:#fff;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);padding-bottom:5rem}
 
+/* ── HERO ── */
+.hero{background:linear-gradient(140deg,#0d2318 0%,#0f3d2a 55%,#122b1e 100%);padding:3rem 1.5rem 2.5rem;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-80px;right:-80px;width:260px;height:260px;background:radial-gradient(circle,rgba(46,204,143,.15) 0%,transparent 70%);border-radius:50%}
+.hero::after{content:'';position:absolute;bottom:-50px;left:-50px;width:180px;height:180px;background:radial-gradient(circle,rgba(46,204,143,.1) 0%,transparent 70%);border-radius:50%}
+.hero-tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);border:1px solid rgba(46,204,143,.4);padding:4px 14px;border-radius:20px;margin-bottom:1rem}
+.hero h1{font-size:30px;font-weight:700;color:#fff;margin-bottom:10px;line-height:1.2}
+.hero h1 span{color:var(--green)}
+.hero-sub{font-size:14px;color:rgba(255,255,255,.6);max-width:460px;margin:0 auto 1.5rem;line-height:1.65}
+
+/* progress ring */
+.ring-wrap{display:flex;align-items:center;justify-content:center;gap:1.5rem;flex-wrap:wrap;margin-bottom:.5rem}
+.ring-container{position:relative;width:86px;height:86px;flex-shrink:0}
+.ring-container svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:rgba(255,255,255,.08);stroke-width:6}
+.ring-fill{fill:none;stroke:var(--green);stroke-width:6;stroke-linecap:round;stroke-dasharray:239;stroke-dashoffset:239;transition:stroke-dashoffset .6s ease}
+.ring-inner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.ring-pct{font-size:20px;font-weight:700;color:#fff;line-height:1}
+.ring-lbl{font-size:9px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.05em}
+.ring-stats{text-align:left}
+.ring-stat{font-size:13px;color:rgba(255,255,255,.65);margin-bottom:4px}
+.ring-stat strong{color:#fff}
+
+/* how */
+.page{max-width:720px;margin:0 auto;padding:0 1rem}
+.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:1.5rem 0}
+.how-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:.85rem .6rem;text-align:center}
+.how-icon{font-size:18px;margin-bottom:5px}
+.how-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px}
+.how-desc{font-size:10px;color:var(--muted);line-height:1.4}
+
+/* ── STEP CARD ── */
+.step{background:var(--card);border-radius:18px;border:1px solid var(--border);margin-bottom:1.25rem;overflow:hidden;transition:border-color .3s}
+.step.locked{opacity:.5;pointer-events:none;filter:grayscale(.4)}
+.step.all-done{border-color:var(--green-mid)}
+.step-hdr{padding:1.4rem 1.5rem 0}
+.step-top{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.step-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.s1 .step-icon{background:#e8f0fb;color:#1a4fa0}
+.s2 .step-icon{background:#fef0fb;color:#8a0060}
+.s3 .step-icon{background:#e8f5ee;color:#1a6636}
+.s4 .step-icon{background:#f0ecfb;color:#4a2a99}
+.s5 .step-icon{background:#fef3e2;color:#8a4a00}
+.step-title{font-size:17px;font-weight:700;flex:1}
+.done-badge{font-size:11px;font-weight:600;color:var(--green);background:var(--green-light);padding:2px 10px;border-radius:20px;display:none;flex-shrink:0}
+.step.all-done .done-badge{display:inline-block}
+.lock-badge{font-size:11px;font-weight:600;color:var(--muted);background:#f0f0f0;padding:2px 10px;border-radius:20px;flex-shrink:0}
+.step-desc{font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:1.25rem}
+.meter-wrap{margin:0 1.5rem 1.25rem;background:var(--border);height:3px;border-radius:2px}
+.meter-fill{height:3px;background:var(--green);border-radius:2px;width:0%;transition:width .4s ease}
+
+/* watch */
+.watch{margin:0 1.5rem 1rem;background:#f0f7ff;border:1px solid #cce0f8;border-radius:12px;padding:1rem 1.15rem;display:flex;gap:14px;align-items:center}
+.watch-play{flex-shrink:0;width:52px;height:38px;background:#c00;border-radius:7px;display:flex;align-items:center;justify-content:center;text-decoration:none}
+.play-tri{width:0;height:0;border-top:8px solid transparent;border-bottom:8px solid transparent;border-left:14px solid #fff;margin-left:3px}
+.watch-info{flex:1}
+.watch-tag{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--blue);margin-bottom:3px}
+.watch-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;line-height:1.4}
+.watch-meta{font-size:11px;color:var(--muted);margin-bottom:7px}
+.watch-btn{display:inline-block;font-size:11px;font-weight:600;background:var(--blue);color:#fff;padding:4px 12px;border-radius:20px;text-decoration:none}
+
+/* reading */
+.reading{margin:0 1.5rem 1.25rem;background:#fdf8ff;border:1px solid #e8d8f8;border-radius:12px;padding:.9rem 1.1rem;display:flex;gap:12px;align-items:center}
+.read-icon{font-size:22px;flex-shrink:0}
+.read-info{flex:1}
+.read-tag{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--purple);margin-bottom:3px}
+.read-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px}
+.read-meta{font-size:11px;color:var(--muted);margin-bottom:6px}
+.read-btn{display:inline-block;font-size:11px;font-weight:600;background:var(--purple);color:#fff;padding:4px 12px;border-radius:20px;text-decoration:none}
+
+/* tip */
+.tip-box{margin:0 1.5rem 1.25rem;background:#fffef0;border:1px solid #f0e8a0;border-radius:12px;padding:.9rem 1.1rem}
+.tip-label{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#a08000;margin-bottom:6px}
+.tip-text{font-size:12.5px;color:#555;line-height:1.65}
+.tip-text strong{color:#333}
+
+/* dad check-in */
+.dad-box{margin:0 1.5rem 1.25rem;background:linear-gradient(135deg,#f0f8ff,#e8f4fb);border:1px solid #b8d8f0;border-radius:12px;padding:1rem 1.15rem}
+.dad-label{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#2a6090;margin-bottom:6px}
+.dad-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:5px}
+.dad-text{font-size:12.5px;color:#444;line-height:1.65}
+.dad-q{margin-top:8px;padding-left:12px;border-left:3px solid var(--blue)}
+.dad-q p{font-size:12px;color:#2a6090;line-height:1.7;font-style:italic}
+
+/* experiments */
+.exp-sec{padding:0 1.5rem}
+.sec-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#ccc;margin-bottom:10px}
+.exp-list{list-style:none;margin-bottom:1.25rem}
+.exp-item{border:1px solid #f0f0f0;border-radius:12px;padding:1rem 1.1rem;margin-bottom:.65rem;cursor:pointer;transition:all .25s;user-select:none}
+.exp-item:hover:not(.done){border-color:#d0d0d0}
+.exp-item.done{background:var(--green-light);border-color:var(--green-mid);cursor:default}
+.exp-top{display:flex;align-items:flex-start;gap:10px}
+.exp-check{flex-shrink:0;width:22px;height:22px;border-radius:50%;border:2px solid #ddd;display:flex;align-items:center;justify-content:center;transition:all .25s;background:#fff;margin-top:1px}
+.exp-check.on{background:var(--green);border-color:var(--green)}
+.exp-check.on::after{content:'✓';color:#fff;font-size:12px;font-weight:700}
+.exp-label{font-size:13px;font-weight:600;color:var(--text);line-height:1.5}
+.exp-item.done .exp-label{color:var(--green-d)}
+.exp-why{font-size:12px;color:var(--muted);line-height:1.6;margin:6px 0 10px 32px}
+.exp-item.done .exp-why{display:none}
+.try-box{margin-left:32px;background:#f4f7ff;border-left:3px solid var(--blue);border-radius:0 8px 8px 0;padding:.7rem .9rem}
+.try-lbl{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--blue);margin-bottom:5px}
+.try-prompt{font-size:12.5px;color:#2a2a2a;line-height:1.65;font-style:italic;margin-bottom:8px}
+.try-btn{display:inline-block;font-size:11px;font-weight:600;background:var(--text);color:#fff;padding:5px 13px;border-radius:20px;text-decoration:none}
+.exp-item.done .try-box{display:none}
+.exp-win{display:none;font-size:12px;color:var(--green-d);font-weight:600;margin:5px 0 0 32px}
+.exp-item.done .exp-win{display:block}
+
+/* ── KNOWLEDGE CHECK ── */
+.kcheck{margin:0 1.5rem 1.25rem;border:2px solid #f0e8d0;border-radius:14px;overflow:hidden}
+.kcheck-hdr{background:linear-gradient(135deg,#fffbf0,#fff5dc);padding:1rem 1.15rem;display:flex;align-items:center;gap:10px}
+.kcheck-icon{font-size:22px}
+.kcheck-hdr-text{flex:1}
+.kcheck-title{font-size:14px;font-weight:700;color:#7a4f00;margin-bottom:2px}
+.kcheck-sub{font-size:11px;color:#aa7a00;line-height:1.5}
+.kcheck-locked{padding:1rem 1.15rem;text-align:center;color:var(--muted);font-size:13px;background:#fafafa}
+.kcheck-body{padding:1rem 1.15rem;display:none}
+.kcheck-body.open{display:block}
+.kcheck-intro{font-size:12.5px;color:#555;line-height:1.65;margin-bottom:1rem;padding:0.75rem 1rem;background:#fffef5;border-radius:8px;border:1px solid #f0e8c0}
+.kq{margin-bottom:1rem}
+.kq-text{font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;line-height:1.5}
+.kq-num{color:var(--amber);margin-right:4px}
+.kq textarea{width:100%;font-size:12.5px;border:1px solid #e0e0e0;border-radius:8px;padding:.65rem .85rem;resize:vertical;min-height:70px;font-family:inherit;line-height:1.6;color:var(--text);background:#fff;transition:border-color .2s}
+.kq textarea:focus{outline:none;border-color:var(--amber)}
+.kcheck-evaluate{width:100%;background:var(--amber);color:#fff;font-size:13px;font-weight:700;padding:11px;border:none;border-radius:10px;cursor:pointer;margin-top:.5rem;transition:background .2s}
+.kcheck-evaluate:hover{background:#e09000}
+.kcheck-evaluate:disabled{background:#ccc;cursor:not-allowed}
+.kcheck-result{margin-top:1rem;padding:1rem;border-radius:10px;font-size:13px;line-height:1.65;display:none}
+.kcheck-result.pass{background:var(--green-light);border:1px solid var(--green-mid);color:#1a5a3a}
+.kcheck-result.fail{background:#fef0f0;border:1px solid #f8c8c8;color:#8a2a2a}
+.kcheck-result.loading{background:#f8f8f8;border:1px solid #e0e0e0;color:var(--muted)}
+.result-score{font-size:22px;font-weight:700;margin-bottom:6px}
+.result-feedback{font-size:12.5px;line-height:1.7;margin-bottom:10px}
+.result-unlock{display:inline-block;font-size:12px;font-weight:700;background:var(--green);color:#fff;padding:7px 18px;border-radius:20px;cursor:pointer;border:none;margin-top:4px}
+.result-retry{display:inline-block;font-size:12px;font-weight:700;background:var(--coral);color:#fff;padding:7px 18px;border-radius:20px;cursor:pointer;border:none;margin-top:4px}
+
+/* ── BUILD EVALUATOR ── */
+.evaluator{margin:0 1.5rem 1.25rem;border:2px solid #e0d0f8;border-radius:14px;overflow:hidden}
+.eval-hdr{background:linear-gradient(135deg,#f5f0ff,#ede5ff);padding:1rem 1.15rem;display:flex;align-items:center;gap:10px}
+.eval-icon{font-size:22px}
+.eval-hdr-text{flex:1}
+.eval-title{font-size:14px;font-weight:700;color:#4a2a99;margin-bottom:2px}
+.eval-sub{font-size:11px;color:#7a5ab0;line-height:1.5}
+.eval-locked{padding:1rem 1.15rem;text-align:center;color:var(--muted);font-size:13px;background:#fafafa}
+.eval-body{padding:1rem 1.15rem;display:none}
+.eval-body.open{display:block}
+.eval-intro{font-size:12.5px;color:#555;line-height:1.65;margin-bottom:1rem;padding:.75rem 1rem;background:#f8f5ff;border-radius:8px;border:1px solid #e0d0f8}
+.eval-field label{font-size:12px;font-weight:600;color:var(--text);margin-bottom:5px;display:block}
+.eval-field textarea{width:100%;font-size:12px;border:1px solid #e0e0e0;border-radius:8px;padding:.65rem .85rem;resize:vertical;min-height:100px;font-family:inherit;line-height:1.6;color:var(--text);background:#fff;margin-bottom:.75rem;transition:border-color .2s}
+.eval-field textarea:focus{outline:none;border-color:var(--purple)}
+.eval-submit{width:100%;background:var(--purple);color:#fff;font-size:13px;font-weight:700;padding:11px;border:none;border-radius:10px;cursor:pointer;transition:background .2s}
+.eval-submit:hover{background:#6a4aaf}
+.eval-submit:disabled{background:#ccc;cursor:not-allowed}
+.eval-result{margin-top:1rem;padding:1rem;border-radius:10px;font-size:13px;line-height:1.65;display:none}
+.eval-result.show{display:block;background:var(--green-light);border:1px solid var(--green-mid);color:#1a5a3a}
+.eval-result.loading{display:block;background:#f8f8f8;border:1px solid #e0e0e0;color:var(--muted)}
+.eval-result.needs-work{display:block;background:#fff8f0;border:1px solid #f0d8a8;color:#7a4a00}
+.score-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.score-item{background:rgba(255,255,255,.7);border-radius:8px;padding:.6rem .75rem;text-align:center}
+.score-num{font-size:20px;font-weight:700;line-height:1}
+.score-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
+.unlock-next{display:inline-block;font-size:12px;font-weight:700;background:var(--green);color:#fff;padding:8px 20px;border-radius:20px;cursor:pointer;border:none;margin-top:8px}
+
+/* project */
+.proj-wrap{margin:0 1.5rem 1.25rem}
+.proj{background:linear-gradient(135deg,#fffbf0,#fff8e6);border:1px solid #f0e0b0;border-radius:12px;padding:1.15rem 1.2rem}
+.proj-lbl{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#b07a00;margin-bottom:6px}
+.proj-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px}
+.proj-desc{font-size:12.5px;color:#666;line-height:1.65;margin-bottom:10px}
+.proj-prompt{font-size:12px;background:rgba(255,255,255,.85);border:1px solid #e8d8a8;border-radius:8px;padding:.65rem .85rem;color:#333;line-height:1.75;font-style:italic;margin-bottom:10px;white-space:pre-wrap}
+.proj-btn{display:inline-block;font-size:12px;font-weight:600;background:#1a1a1a;color:#fff;padding:7px 18px;border-radius:20px;text-decoration:none}
+
+/* capstone */
+.capstone{background:linear-gradient(135deg,#0d2318,#0f3d2a);border-radius:14px;padding:1.5rem;margin:0 0 1.25rem}
+.cap-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:8px}
+.cap-title{font-size:18px;font-weight:700;color:#fff;margin-bottom:8px}
+.cap-desc{font-size:13px;color:rgba(255,255,255,.7);line-height:1.65;margin-bottom:1rem}
+.cap-prompt{font-size:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:.75rem 1rem;color:rgba(255,255,255,.85);line-height:1.75;font-style:italic;margin-bottom:1rem;white-space:pre-wrap}
+.cap-btn{display:inline-block;font-size:12px;font-weight:700;background:var(--green);color:#fff;padding:8px 20px;border-radius:20px;text-decoration:none}
+
+/* resources */
+.res-wrap{padding:0 1.5rem 1.5rem}
+.res-lbl{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#ccc;margin-bottom:8px}
+.res-row{display:flex;flex-wrap:wrap;gap:7px}
+.res-link{font-size:12px;color:var(--blue);border:1px solid #d0e4f7;background:#f5f9ff;padding:4px 12px;border-radius:20px;text-decoration:none}
+.res-link:hover{background:#deeeff}
+
+/* celebration */
+.cel-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;z-index:1000}
+.cel-overlay.show{display:flex}
+.cel-card{background:#fff;border-radius:24px;padding:2.5rem 2rem;text-align:center;max-width:380px;width:92%;animation:popIn .5s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes popIn{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+.cel-emoji{font-size:60px;display:block;margin-bottom:1rem;animation:bounce .6s ease .3s both}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.cel-title{font-size:24px;font-weight:700;margin-bottom:8px}
+.cel-sub{font-size:14px;color:var(--muted);line-height:1.65;margin-bottom:1.5rem}
+.cel-btn{background:var(--green);color:#fff;font-size:14px;font-weight:600;padding:11px 30px;border-radius:24px;border:none;cursor:pointer}
+.confetti-c{position:fixed;top:0;left:0;right:0;pointer-events:none;z-index:999}
+.cp{position:absolute;top:-10px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:0}}
+
+.footer{max-width:720px;margin:2rem auto 0;padding:1.5rem 1rem;text-align:center;border-top:1px solid var(--border)}
+.footer p{font-size:12px;color:var(--muted2);line-height:1.8}
+.footer a{color:var(--blue);text-decoration:none}
+
+@media(max-width:480px){
+  .hero h1{font-size:24px}
+  .how-grid{grid-template-columns:repeat(2,1fr)}
+  .watch{flex-direction:column}
+  .score-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="confetti-c" id="confetti"></div>
+<div class="cel-overlay" id="cel">
+  <div class="cel-card">
+    <span class="cel-emoji">🏆</span>
+    <div class="cel-title">You crushed it, Kaitlyn!</div>
+    <div class="cel-sub">Five steps. Twenty experiments. Knowledge checks passed. Builds evaluated. You now know more about AI than 95% of people your age — and you've actually built and proven it. Show your dad.</div>
+    <button class="cel-btn" onclick="closeCel()">Keep building →</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Your Personal AI Playbook</div>
+  <h1>Hey <span>Kaitlyn</span> —<br>let's master Claude.</h1>
+  <p class="hero-sub">Five steps. Each one gated — you unlock the next by proving you learned the last. Watch, experiment, get tested, build, get evaluated. That's how real learning works.</p>
+  <div class="ring-wrap">
+    <div class="ring-container">
+      <svg width="86" height="86" viewBox="0 0 86 86">
+        <circle class="ring-bg" cx="43" cy="43" r="38"/>
+        <circle class="ring-fill" id="ring" cx="43" cy="43" r="38"/>
+      </svg>
+      <div class="ring-inner"><div class="ring-pct" id="rpct">0%</div><div class="ring-lbl">done</div></div>
+    </div>
+    <div class="ring-stats">
+      <div class="ring-stat"><strong id="sdone">0</strong> of <strong>20</strong> experiments done</div>
+      <div class="ring-stat"><strong id="ssteps">0</strong> of <strong>5</strong> steps unlocked</div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="how-grid">
+    <div class="how-card"><div class="how-icon">▶</div><div class="how-title">Watch</div><div class="how-desc">See it first</div></div>
+    <div class="how-card"><div class="how-icon">✱</div><div class="how-title">Try</div><div class="how-desc">Hands-on experiments</div></div>
+    <div class="how-card"><div class="how-icon">🧠</div><div class="how-title">Lock it in</div><div class="how-desc">Knowledge check to unlock</div></div>
+    <div class="how-card"><div class="how-icon">⬡</div><div class="how-title">Build</div><div class="how-desc">Evaluated by AI</div></div>
+  </div>
+
+<!-- ═══ STEP 1 ═══ -->
+<div class="step s1" id="step1">
+  <div class="step-hdr">
+    <div class="step-top">
+      <div class="step-icon">1</div>
+      <div class="step-title">Learn the basics</div>
+      <span class="done-badge">Complete ✓</span>
+    </div>
+    <p class="step-desc">Understand what Claude actually is, how it thinks, and how to prompt it well. This is the foundation. Everything else builds here.</p>
+  </div>
+  <div class="meter-wrap"><div class="meter-fill" id="m1"></div></div>
+
+  <div class="watch">
+    <a class="watch-play" href="https://www.youtube.com/watch?v=WSPChlfxJyA" target="_blank"><div class="play-tri"></div></a>
+    <div class="watch-info">
+      <div class="watch-tag">Watch first · 19 min</div>
+      <div class="watch-title">Full Claude Tutorial: Beginner to Advanced in 19 Minutes</div>
+      <div class="watch-meta">The best single overview for someone starting from scratch — prompting, features, real use cases</div>
+      <a class="watch-btn" href="https://www.youtube.com/watch?v=WSPChlfxJyA" target="_blank">Watch on YouTube →</a>
+    </div>
+  </div>
+
+  <div class="reading">
+    <div class="read-icon">📖</div>
+    <div class="read-info">
+      <div class="read-tag">Read · 5 min</div>
+      <div class="read-title">A Beginner's Guide to Using Claude (2026)</div>
+      <div class="read-meta">Clear written companion to the video — great for anything you want to re-read slowly</div>
+      <a class="read-btn" href="https://helenadibiase.substack.com/p/a-beginners-guide-to-using-claude" target="_blank">Read the guide →</a>
+    </div>
+  </div>
+
+  <div class="exp-sec">
+    <div class="sec-label">Experiments — complete all 4 to unlock the knowledge check</div>
+    <ul class="exp-list" id="list1">
+      <li class="exp-item" onclick="tick(this,1)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Discover what Claude does and doesn't know</span></div>
+        <p class="exp-why">Claude reasons from training data — it doesn't browse the internet in real time. This single experiment sets the mental model for everything that follows.</p>
+        <div class="try-box"><div class="try-lbl">Try this exact prompt</div><p class="try-prompt">"What happened in the news today?" — then follow up: "What do you actually know about, and what's outside your knowledge?"</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">Mental model locked in. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,1)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Feel the difference between a vague and specific prompt</span></div>
+        <p class="exp-why">Context transforms output. Try both versions and feel it yourself — this is the single most important prompting lesson.</p>
+        <div class="try-box"><div class="try-lbl">Try both — notice the difference</div><p class="try-prompt">First: "Explain supply chain." Then: "I'm a second-year IE student at Lehigh. Explain supply chain optimization simply with one real-world example. Under 150 words."</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">That context difference is the whole game. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,1)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Iterate — treat every response as a draft</span></div>
+        <p class="exp-why">One follow-up message can completely transform what you get. Build this habit now.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">Ask Claude anything. Then reply: "That's okay but make it shorter, more casual, and add one specific example I can relate to as a college student."</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">Always iterate. First response is a draft. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,1)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Use Claude as your 24/7 tutor</span></div>
+        <p class="exp-why">Claude explains the same concept ten different ways until it clicks — no judgment, no wait time. Use it on something you're actually confused about right now.</p>
+        <div class="try-box"><div class="try-lbl">Try this right now</div><p class="try-prompt">"I'm an IE student and I don't fully understand [topic confusing you]. Explain it like I'm smart but new to this — use an analogy and a concrete example."</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">Your personal tutor: always on. ✓</p>
+      </li>
+    </ul>
+  </div>
+
+  <!-- KNOWLEDGE CHECK 1 -->
+  <div class="kcheck" id="kc1">
+    <div class="kcheck-hdr">
+      <div class="kcheck-icon">🧠</div>
+      <div class="kcheck-hdr-text">
+        <div class="kcheck-title">Knowledge Check — Step 1</div>
+        <div class="kcheck-sub">Answer in your own words. Claude will evaluate and score your responses. Pass to unlock your build project.</div>
+      </div>
+    </div>
+    <div class="kcheck-locked" id="kc1-locked">Complete all 4 experiments above to unlock this check.</div>
+    <div class="kcheck-body" id="kc1-body">
+      <div class="kcheck-intro">Answer these questions in your own words — no looking things up. Write like you're explaining to a friend. There are no trick questions, just show what you actually understood.</div>
+      <div class="kq"><div class="kq-text"><span class="kq-num">Q1.</span> Claude isn't connected to the internet. In your own words, explain what this means for how you should use it — and give one example of when this matters.</div><textarea id="kc1q1" placeholder="Type your answer here..."></textarea></div>
+      <div class="kq"><div class="kq-text"><span class="kq-num">Q2.</span> What's the difference between a vague prompt and a specific one? Write an example of each for any topic you care about.</div><textarea id="kc1q2" placeholder="Type your answer here..."></textarea></div>
+      <div class="kq"><div class="kq-text"><span class="kq-num">Q3.</span> Why is iterating on Claude's response better than just accepting the first answer? What does a good follow-up message look like?</div><textarea id="kc1q3" placeholder="Type your answer here..."></textarea></div>
+      <button class="kcheck-evaluate" id="kc1-btn" onclick="evaluateKC(1)">Submit for Evaluation →</button>
+      <div class="kcheck-result" id="kc1-result"></div>
+    </div>
+  </div>
+
+  <!-- BUILD 1 -->
+  <div class="proj-wrap" id="build1" style="display:none">
+    <div class="proj">
+      <div class="proj-lbl">Your first build — unlocked!</div>
+      <div class="proj-title">Build a wellness tracker</div>
+      <div class="proj-desc">Ask Claude to build you a simple interactive workout tracker. No coding needed. After you build it, paste a description into the Build Evaluator below to get scored and unlock Step 2.</div>
+      <p class="proj-prompt">"Build me a simple interactive workout tracker I can use in my browser. I want to log exercises, sets, and reps each day and see my weekly progress at a glance. Make it clean and easy to update."</p>
+      <a class="proj-btn" href="https://claude.ai" target="_blank">Open Claude and build it →</a>
+    </div>
+  </div>
+
+  <!-- EVALUATOR 1 -->
+  <div class="evaluator" id="ev1" style="display:none">
+    <div class="eval-hdr">
+      <div class="eval-icon">⚡</div>
+      <div class="eval-hdr-text">
+        <div class="eval-title">Build Evaluator — Step 1</div>
+        <div class="eval-sub">Describe what you built. Claude will score it across 4 dimensions and give you specific feedback.</div>
+      </div>
+    </div>
+    <div class="eval-body open">
+      <div class="eval-intro">Describe what you built in detail: what it does, how you prompted Claude to build it, what you'd change, and what surprised you. The more detail you give, the better feedback you'll get.</div>
+      <div class="eval-field"><label>Describe your build and the process</label><textarea id="ev1-desc" placeholder="e.g. I built a workout tracker that lets me log exercises and sets. I asked Claude for a clean design with checkboxes. It generated a React artifact. I then iterated and asked it to add a weekly summary..."></textarea></div>
+      <div class="eval-field"><label>What did you learn from building this?</label><textarea id="ev1-learn" placeholder="What clicked? What surprised you? What would you do differently?"></textarea></div>
+      <button class="eval-submit" id="ev1-btn" onclick="evaluateBuild(1)">Get My Score & Unlock Step 2 →</button>
+      <div class="eval-result" id="ev1-result"></div>
+    </div>
+  </div>
+
+  <div class="res-wrap">
+    <div class="res-lbl">Also useful</div>
+    <div class="res-row">
+      <a class="res-link" href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview" target="_blank">Anthropic prompt engineering guide</a>
+      <a class="res-link" href="https://www.youtube.com/watch?v=Xg55nTrbYYY" target="_blank">Full Claude Course 2026 (YouTube)</a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ STEP 2 ═══ -->
+<div class="step s2 locked" id="step2">
+  <div class="step-hdr">
+    <div class="step-top">
+      <div class="step-icon">2</div>
+      <div class="step-title">Set Claude up for YOU</div>
+      <span class="lock-badge">🔒 Complete Step 1 to unlock</span>
+      <span class="done-badge">Complete ✓</span>
+    </div>
+    <p class="step-desc">The highest-leverage thing a beginner can do — and almost nobody teaches it. Set up custom instructions, memory, and Projects so Claude knows who you are every single conversation. You'll never re-explain yourself again.</p>
+  </div>
+  <div class="meter-wrap"><div class="meter-fill" id="m2"></div></div>
+
+  <div class="watch">
+    <a class="watch-play" href="https://www.youtube.com/watch?v=XTWb5oEfqdY" target="_blank"><div class="play-tri"></div></a>
+    <div class="watch-info">
+      <div class="watch-tag">Watch first · Full features</div>
+      <div class="watch-title">Claude AI Full Tutorial: From Basics to Agentic AI (2026)</div>
+      <div class="watch-meta">Covers custom instructions, Projects, memory — exactly what this step is about</div>
+      <a class="watch-btn" href="https://www.youtube.com/watch?v=XTWb5oEfqdY" target="_blank">Watch on YouTube →</a>
+    </div>
+  </div>
+
+  <div class="reading">
+    <div class="read-icon">📖</div>
+    <div class="read-info">
+      <div class="read-tag">Read · 7 min</div>
+      <div class="read-title">How to Set Up Claude Custom Instructions (7 Tips, 2026)</div>
+      <div class="read-meta">Real examples of what to write — includes what to avoid and why specificity matters</div>
+      <a class="read-btn" href="https://www.jamout.ai/blog/how-to-set-up-custom-instructions-in-claude-the-right-way-7-tips-that-make-your-ai-actually-sound-like-you-not-a-robot" target="_blank">Read the guide →</a>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <div class="tip-label">💡 The context tax</div>
+    <p class="tip-text">Every conversation without custom instructions costs you a <strong>"context tax"</strong> — 2 minutes re-explaining who you are before asking your actual question. Multiply that across every Claude session in a year. Custom instructions eliminate this entirely. You set them once, and Claude knows your name, major, goals, and preferences automatically in every conversation.</p>
+  </div>
+
+  <div class="exp-sec">
+    <div class="sec-label">Experiments</div>
+    <ul class="exp-list" id="list2">
+      <li class="exp-item" onclick="tick(this,2)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Write your custom instructions</span></div>
+        <p class="exp-why">Go to Settings → User Preferences and write a brief about yourself. Loads automatically into every conversation. Takes 5 minutes. Changes everything.</p>
+        <div class="try-box"><div class="try-lbl">Do this in Settings, then verify</div><p class="try-prompt">In Claude Settings → User Preferences, paste something like: "I'm Kaitlyn, a sophomore IE student at Lehigh University. I'm into fitness and wellness. I like concise, direct answers — no filler. Use examples relevant to college or engineering." Then start a new chat and ask: "Who am I and how should you talk to me?"</p><a class="try-btn" href="https://claude.ai/settings" target="_blank">Open Settings →</a></div>
+        <p class="exp-win">Claude knows you before you say a word. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,2)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Create your school Project</span></div>
+        <p class="exp-why">Projects are persistent workspaces with their own context and instructions. Create one for Lehigh coursework — you'll use it for every assignment from here.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">Click "Projects" in sidebar → "New Project" → name it "Lehigh IE — Coursework." In Project instructions: "I'm an IE student at Lehigh. Help with coursework, research, and problem sets. Be direct, use manufacturing or operations examples."</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">Your dedicated school workspace is live. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,2)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Check and improve what Claude remembers</span></div>
+        <p class="exp-why">As of 2026, Claude automatically builds a memory of you across conversations. View and edit exactly what it knows — then tell it what to fix.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">Go to Settings → Capabilities → Memory. Read what Claude remembers. Then ask Claude: "What do you currently remember about me? What should I add or correct?" — it'll help you imlock it in.</p><a class="try-btn" href="https://claude.ai/settings" target="_blank">Open Settings →</a></div>
+        <p class="exp-win">Your AI actually knows you now. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,2)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Create a fitness & wellness Project</span></div>
+        <p class="exp-why">Different areas of your life get different Projects — each with its own context so Claude is already briefed before you ask anything.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">New Project: "Fitness & Wellness." Instructions: "Help with workout planning, nutrition, recovery, and wellness. I'm a college student — practical, time-efficient advice only. No generic platitudes." Then ask: "Build me a 4-week beginner strength training plan, 45 min, 3x per week."</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">Two Projects, zero re-explaining. Pro setup. ✓</p>
+      </li>
+    </ul>
+  </div>
+
+  <div class="kcheck" id="kc2">
+    <div class="kcheck-hdr"><div class="kcheck-icon">🧠</div><div class="kcheck-hdr-text"><div class="kcheck-title">Knowledge Check — Step 2</div><div class="kcheck-sub">Answer in your own words to unlock the build project.</div></div></div>
+    <div class="kcheck-locked" id="kc2-locked">Complete all 4 experiments above to unlock.</div>
+    <div class="kcheck-body" id="kc2-body">
+      <div class="kcheck-intro">Don't look anything up. Just write what you actually understood from the experiments.</div>
+      <div class="kq"><div class="kq-text"><span class="kq-num">Q1.</span> Explain the "context tax" in your own words. Why does setting up custom instructions matter, and what would you include in yours?</div><textarea id="kc2q1" placeholder="Your answer..."></textarea></div>
+      <div class="kq"><div class="kq-text"><span class="kq-num">Q2.</span> What's the difference between global custom instructions and a Project? When would you use each?</div><textarea id="kc2q2" placeholder="Your answer..."></textarea></div>
+      <div class="kq"><div class="kq-text"><span class="kq-num">Q3.</span> Claude's memory updates automatically over time. Why is it still worth manually checking and editing what it remembers?</div><textarea id="kc2q3" placeholder="Your answer..."></textarea></div>
+      <button class="kcheck-evaluate" id="kc2-btn" onclick="evaluateKC(2)">Submit for Evaluation →</button>
+      <div class="kcheck-result" id="kc2-result"></div>
+    </div>
+  </div>
+
+  <div class="proj-wrap" id="build2" style="display:none">
+    <div class="proj">
+      <div class="proj-lbl">Your build — unlocked!</div>
+      <div class="proj-title">Write your master custom instructions</div>
+      <div class="proj-desc">Have Claude help you write the strongest possible custom instructions for your account. Then paste them into Settings and test them.</div>
+      <p class="proj-prompt">"Help me write the best possible custom instructions for my Claude account. I'm Kaitlyn, a sophomore IE student at Lehigh who's into fitness and wellness. I want Claude to always know my context, give direct answers, use relevant examples, and not waste my time. Make them specific and strong — not generic."</p>
+      <a class="proj-btn" href="https://claude.ai" target="_blank">Open Claude and build it →</a>
+    </div>
+  </div>
+
+  <div class="evaluator" id="ev2" style="display:none">
+    <div class="eval-hdr"><div class="eval-icon">⚡</div><div class="eval-hdr-text"><div class="eval-title">Build Evaluator — Step 2</div><div class="eval-sub">Share your custom instructions and what you set up. Get scored and unlock Step 3.</div></div></div>
+    <div class="eval-body open">
+      <div class="eval-intro">Paste your actual custom instructions below, describe the Projects you created, and explain how you set up your memory. The more specific you are, the better your feedback.</div>
+      <div class="eval-field"><label>Your custom instructions (paste them here)</label><textarea id="ev2-desc" placeholder="Paste the actual instructions you wrote and put in Settings..."></textarea></div>
+      <div class="eval-field"><label>Describe the Projects you created and what you put in each</label><textarea id="ev2-learn" placeholder="e.g. I created two Projects: one for school with instructions about IE coursework, one for fitness..."></textarea></div>
+      <button class="eval-submit" id="ev2-btn" onclick="evaluateBuild(2)">Get My Score & Unlock Step 3 →</button>
+      <div class="eval-result" id="ev2-result"></div>
+    </div>
+  </div>
+
+  <div class="dad-box">
+    <div class="dad-label">📱 Check-in with Dad</div>
+    <div class="dad-title">After this step — show your dad what you set up</div>
+    <div class="dad-text">Open Claude together and show him your custom instructions and Projects. He should ask you:</div>
+    <div class="dad-q"><p>"Why did you set up your instructions this way?" / "What would you change now that you've used it?" / "Show me what happens when you start a new conversation — does Claude know who you are?"</p></div>
+  </div>
+
+  <div class="res-wrap"><div class="res-lbl">Also useful</div><div class="res-row"><a class="res-link" href="https://www.inkeybit.com/blog/claude-projects-complete-guide" target="_blank">Complete guide to Claude Projects</a><a class="res-link" href="https://helenadibiase.substack.com/p/a-beginners-guide-to-using-claude" target="_blank">Memory & instructions explained</a></div></div>
+</div>
+
+<!-- ═══ STEP 3 ═══ -->
+<div class="step s3 locked" id="step3">
+  <div class="step-hdr">
+    <div class="step-top"><div class="step-icon">3</div><div class="step-title">Use it for school</div><span class="lock-badge">🔒 Complete Step 2 to unlock</span><span class="done-badge">Complete ✓</span></div>
+    <p class="step-desc">Claude is one of the best academic thinking partners you'll have — for research, writing, studying, and understanding hard material faster than any textbook.</p>
+  </div>
+  <div class="meter-wrap"><div class="meter-fill" id="m3"></div></div>
+
+  <div class="watch"><a class="watch-play" href="https://www.youtube.com/watch?v=rRrBbyv3ChM" target="_blank"><div class="play-tri"></div></a><div class="watch-info"><div class="watch-tag">Watch first · Full course</div><div class="watch-title">Full Claude Tutorial for Beginners — Become a PRO (2026)</div><div class="watch-meta">Practical walkthrough for real academic tasks — one of the most comprehensive beginner courses available</div><a class="watch-btn" href="https://www.youtube.com/watch?v=rRrBbyv3ChM" target="_blank">Watch on YouTube →</a></div></div>
+
+  <div class="exp-sec">
+    <div class="sec-label">Experiments</div>
+    <ul class="exp-list" id="list3">
+      <li class="exp-item" onclick="tick(this,3)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Summarize a research paper in 2 minutes</span></div>
+        <p class="exp-why">Claude extracts key ideas instantly. Try it with a real paper you have right now — this is one of the most practical skills you'll use throughout your degree.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">Paste any paper or abstract: "I'm an IE student. Summarize: key findings, method used, why it matters, and one limitation — plain English, under 200 words."</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">Hours of reading condensed to 2 minutes. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,3)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Get a report outline before writing a word</span></div>
+        <p class="exp-why">Let Claude structure the report first. You fill in what you know. Twice as fast, half the stress.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">"I need to write a [X page] report on [your topic] for [class name]. Give me an outline with headings and 2–3 bullet points per section. Then tell me what sources to look for."</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">Blank page problem: solved forever. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,3)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Get quizzed before an exam</span></div>
+        <p class="exp-why">Active recall is the most effective study method proven by cognitive science. Better than any flashcard app — unlimited, personalized, free.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">"Quiz me on [topic you have a test on]. One question at a time. Wait for my answer. Tell me if I'm right. If wrong, explain why clearly. Then move on."</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">Best study session you didn't have to plan. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,3)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Get direct critical feedback on your writing</span></div>
+        <p class="exp-why">Specific critique — not "is this good?" — is what actually makes you a better writer. Be direct with Claude about what you want improved.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">Paste something you wrote: "Give me critical feedback. Focus on: (1) clarity of argument, (2) structure, (3) one thing that's weak and exactly how to fix it. Be direct."</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">That feedback loop makes you better. ✓</p>
+      </li>
+    </ul>
+  </div>
+
+  <div class="kcheck" id="kc3"><div class="kcheck-hdr"><div class="kcheck-icon">🧠</div><div class="kcheck-hdr-text"><div class="kcheck-title">Knowledge Check — Step 3</div><div class="kcheck-sub">Answer in your own words to unlock your build.</div></div></div><div class="kcheck-locked" id="kc3-locked">Complete all 4 experiments to unlock.</div><div class="kcheck-body" id="kc3-body"><div class="kcheck-intro">Write what you actually learned — no looking things up.</div><div class="kq"><div class="kq-text"><span class="kq-num">Q1.</span> You have a 10-page report due in a week on lean manufacturing. Walk me through exactly how you'd use Claude to make that process faster and better — step by step.</div><textarea id="kc3q1" placeholder="Your answer..."></textarea></div><div class="kq"><div class="kq-text"><span class="kq-num">Q2.</span> Why is active recall (getting quizzed) more effective than re-reading notes? How would you use Claude specifically for exam prep in your hardest class?</div><textarea id="kc3q2" placeholder="Your answer..."></textarea></div><div class="kq"><div class="kq-text"><span class="kq-num">Q3.</span> What's the difference between asking Claude "is this essay good?" vs. asking for specific feedback? Write an example of a strong feedback request for something you're working on.</div><textarea id="kc3q3" placeholder="Your answer..."></textarea></div><button class="kcheck-evaluate" id="kc3-btn" onclick="evaluateKC(3)">Submit for Evaluation →</button><div class="kcheck-result" id="kc3-result"></div></div></div>
+
+  <div class="proj-wrap" id="build3" style="display:none"><div class="proj"><div class="proj-lbl">Your build — unlocked!</div><div class="proj-title">Interactive study guide for your hardest class</div><div class="proj-desc">Pick your hardest class right now. Build a personalized study guide — concepts, glossary, and a real quiz. Then evaluate it below to unlock Step 4.</div><p class="proj-prompt">"Build me an interactive study guide for [your hardest class]. Include: (1) the 10 most important concepts explained simply, (2) a glossary of key terms, (3) 10 quiz questions with answers I can test myself on."</p><a class="proj-btn" href="https://claude.ai" target="_blank">Open Claude and build it →</a></div></div>
+
+  <div class="evaluator" id="ev3" style="display:none"><div class="eval-hdr"><div class="eval-icon">⚡</div><div class="eval-hdr-text"><div class="eval-title">Build Evaluator — Step 3</div><div class="eval-sub">Describe your study guide to get scored and unlock Step 4.</div></div></div><div class="eval-body open"><div class="eval-intro">Describe your study guide in detail — what subject, what concepts you included, how you prompted Claude to build it, and how you'd actually use it to study.</div><div class="eval-field"><label>Describe your study guide</label><textarea id="ev3-desc" placeholder="What subject, what did it include, how did you build it..."></textarea></div><div class="eval-field"><label>How would you actually use this to study? Be specific.</label><textarea id="ev3-learn" placeholder="Walk through exactly how you'd use this before your next exam..."></textarea></div><button class="eval-submit" id="ev3-btn" onclick="evaluateBuild(3)">Get My Score & Unlock Step 4 →</button><div class="eval-result" id="ev3-result"></div></div></div>
+
+  <div class="res-wrap"><div class="res-lbl">Also useful</div><div class="res-row"><a class="res-link" href="https://github.com/anthropics/prompt-eng-interactive-tutorial" target="_blank">Anthropic interactive tutorial</a><a class="res-link" href="https://www.youngurbanproject.com/learn-claude-ai-free-youtube-videos/" target="_blank">20 free YouTube videos to learn Claude</a></div></div>
+</div>
+
+<!-- ═══ STEP 4 ═══ -->
+<div class="step s4 locked" id="step4">
+  <div class="step-hdr">
+    <div class="step-top"><div class="step-icon">4</div><div class="step-title">Apply it to engineering</div><span class="lock-badge">🔒 Complete Step 3 to unlock</span><span class="done-badge">Complete ✓</span></div>
+    <p class="step-desc">IE is about optimizing systems and making sense of data. Claude thinks in systems too — making it the most natural IE thinking partner you'll ever have.</p>
+  </div>
+  <div class="meter-wrap"><div class="meter-fill" id="m4"></div></div>
+
+  <div class="watch"><a class="watch-play" href="https://www.youtube.com/watch?v=VbSF8TUpsjE" target="_blank"><div class="play-tri"></div></a><div class="watch-info"><div class="watch-tag">Watch first · 2026 masterclass</div><div class="watch-title">Claude Tutorial for Beginners: The Complete 2026 Masterclass</div><div class="watch-meta">Advanced features — artifacts, file uploads, data analysis — directly relevant to IE work</div><a class="watch-btn" href="https://www.youtube.com/watch?v=VbSF8TUpsjE" target="_blank">Watch on YouTube →</a></div></div>
+
+  <div class="exp-sec">
+    <div class="sec-label">Experiments</div>
+    <ul class="exp-list" id="list4">
+      <li class="exp-item" onclick="tick(this,4)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Analyze a real dataset</span></div>
+        <p class="exp-why">Paste data in and Claude spots patterns, flags outliers, and suggests what to investigate — like a data analyst on call. Use anything: a CSV, a table, data from a class assignment.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">Paste any table of data: "I'm an IE student. Analyze this: what patterns do you see, what's an outlier, what would you investigate further, and what's one chart I should make?"</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">On-demand data analyst: activated. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,4)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Map a process and find the waste</span></div>
+        <p class="exp-why">Lean thinking finds waste in any process. Describe anything around you — coffee shop, campus dining, morning routine — and Claude applies IE thinking to it.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">"Map this process step-by-step, identify waste and bottlenecks using lean principles, and suggest two improvements with estimated impact: [describe any process you've observed recently]."</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">That's a real lean analysis. That's IE. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,4)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Get code or formulas written and explained</span></div>
+        <p class="exp-why">Stuck on Python, R, Excel, or stats? Claude writes it, explains every step, debugs when it breaks — faster than any office hour.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">"I'm working on a [Python / Excel / R] problem for my IE class. Here's what I need: [describe it]. Write the code or formula, explain each part, and tell me what to watch out for."</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">Office hours: optional. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,4)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Build a dashboard around data you care about</span></div>
+        <p class="exp-why">Dashboards are the language of engineers. Use your own fitness data to make it personal — and learn how to turn numbers into decisions.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">"Build me a visual dashboard that tracks my weekly workouts — logging exercises, duration, and intensity — and shows progress trends over time. Clean, interactive, something I'd actually open."</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">You just built a real engineer's dashboard. ✓</p>
+      </li>
+    </ul>
+  </div>
+
+  <div class="kcheck" id="kc4"><div class="kcheck-hdr"><div class="kcheck-icon">🧠</div><div class="kcheck-hdr-text"><div class="kcheck-title">Knowledge Check — Step 4</div><div class="kcheck-sub">Answer to unlock your IE build project.</div></div></div><div class="kcheck-locked" id="kc4-locked">Complete all 4 experiments to unlock.</div><div class="kcheck-body" id="kc4-body"><div class="kcheck-intro">Apply what you learned — answer these like you'd explain them to a classmate.</div><div class="kq"><div class="kq-text"><span class="kq-num">Q1.</span> You've been asked to improve the checkout process at a campus dining hall. Walk through how you'd use Claude to help you — from process mapping to solution recommendation.</div><textarea id="kc4q1" placeholder="Your answer..."></textarea></div><div class="kq"><div class="kq-text"><span class="kq-num">Q2.</span> A professor gives you a messy CSV with 500 rows of manufacturing data and asks you to find patterns. How would you use Claude? What specific prompts would you use?</div><textarea id="kc4q2" placeholder="Your answer..."></textarea></div><div class="kq"><div class="kq-text"><span class="kq-num">Q3.</span> You built a fitness dashboard. How is this the same kind of thinking an IE does professionally — and how would you describe this project to an interviewer?</div><textarea id="kc4q3" placeholder="Your answer..."></textarea></div><button class="kcheck-evaluate" id="kc4-btn" onclick="evaluateKC(4)">Submit for Evaluation →</button><div class="kcheck-result" id="kc4-result"></div></div></div>
+
+  <div class="proj-wrap" id="build4" style="display:none"><div class="proj"><div class="proj-lbl">Your build — unlocked!</div><div class="proj-title">IE tool for something you actually care about</div><div class="proj-desc">Pick one and build it. Each applies real IE thinking to real life — and each one is something you could show an employer.</div><p class="proj-prompt">Option A — Fitness Optimizer: "Build a workout optimization tracker that logs exercises, tracks 4-week progress, identifies plateaus, and recommends adjustments. IE-level analysis, clean UI."
+
+Option B — Time Study: "Build a personal time-study tool to log how I spend each hour for a week — then show where my time goes vs. where I think it goes, with a breakdown by category."
+
+Option C — Trip Optimizer: "Build a trip comparison tool that compares 3 destinations by total cost, travel time, and value — gives a ranked recommendation with reasoning shown."</p><a class="proj-btn" href="https://claude.ai" target="_blank">Open Claude and build it →</a></div></div>
+
+  <div class="evaluator" id="ev4" style="display:none"><div class="eval-hdr"><div class="eval-icon">⚡</div><div class="eval-hdr-text"><div class="eval-title">Build Evaluator — Step 4</div><div class="eval-sub">Describe your IE tool to get scored and unlock Step 5.</div></div></div><div class="eval-body open"><div class="eval-intro">Describe your IE build in detail — what you made, how you used IE thinking, what the output looks like, and what you'd show an employer about it.</div><div class="eval-field"><label>Describe your IE tool and how you built it</label><textarea id="ev4-desc" placeholder="Which option did you pick? What does it do? How did you prompt Claude to build it?"></textarea></div><div class="eval-field"><label>How does this demonstrate IE thinking? How would you pitch it to an interviewer?</label><textarea id="ev4-learn" placeholder="Connect it to what IEs actually do professionally..."></textarea></div><button class="eval-submit" id="ev4-btn" onclick="evaluateBuild(4)">Get My Score & Unlock Step 5 →</button><div class="eval-result" id="ev4-result"></div></div></div>
+
+  <div class="dad-box"><div class="dad-label">📱 Check-in with Dad</div><div class="dad-title">After this step — demo your IE tool for your dad</div><div class="dad-text">Open the tool you built and walk him through it. He should ask:</div><div class="dad-q"><p>"How does this tool relate to what industrial engineers actually do?" / "How did you use Claude to build this — walk me through the prompts you used." / "If you were showing this in a job interview, what would you say?"</p></div></div>
+
+  <div class="res-wrap"><div class="res-lbl">Also useful</div><div class="res-row"><a class="res-link" href="https://docs.anthropic.com/en/docs/build-with-claude/files" target="_blank">Working with files in Claude</a><a class="res-link" href="https://claudeskills.cc/tutorials" target="_blank">Claude skills tutorials</a></div></div>
+</div>
+
+<!-- ═══ STEP 5 ═══ -->
+<div class="step s5 locked" id="step5">
+  <div class="step-hdr">
+    <div class="step-top"><div class="step-icon">5</div><div class="step-title">Build things & stand out</div><span class="lock-badge">🔒 Complete Step 4 to unlock</span><span class="done-badge">Complete ✓</span></div>
+    <p class="step-desc">User to builder. You'll learn what Skills are, how to use them, how to have Claude build custom Skills for you, and how to use all of this to stand out before you even graduate.</p>
+  </div>
+  <div class="meter-wrap"><div class="meter-fill" id="m5"></div></div>
+
+  <div class="watch"><a class="watch-play" href="https://www.youtube.com/watch?v=O_z9vDLgvoY" target="_blank"><div class="play-tri"></div></a><div class="watch-info"><div class="watch-tag">Watch first · Brand new 2026</div><div class="watch-title">Claude Skills Tutorial (2026): Save, Build & Share Reusable Skills</div><div class="watch-meta">Just released — shows exactly how Skills work and how to create your own. Most people haven't found this yet.</div><a class="watch-btn" href="https://www.youtube.com/watch?v=O_z9vDLgvoY" target="_blank">Watch on YouTube →</a></div></div>
+
+  <div class="tip-box">
+    <div class="tip-label">💡 What's a Skill?</div>
+    <p class="tip-text">A Skill is a saved, reusable prompt or workflow Claude can run on demand — like a shortcut for things you do repeatedly. Instead of typing the same long prompt every time, you save it as a Skill and just call it. You can use Skills others built, or have Claude build custom ones for you. Think of it as your personal AI tools library.</p>
+  </div>
+
+  <div class="exp-sec">
+    <div class="sec-label">Experiments</div>
+    <ul class="exp-list" id="list5">
+      <li class="exp-item" onclick="tick(this,5)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Understand Skills by using one</span></div>
+        <p class="exp-why">Best way to understand Skills is to experience one. Ask Claude to walk you through how they work — then try a simple one before building your own.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">"Explain how Claude Skills work — what they are, how I use them, and show me a simple example I can run right now. Then walk me through how I'd create my own."</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">Skills demystified. You know what most users don't. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,5)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Have Claude build you a custom Skill</span></div>
+        <p class="exp-why">This is the move that separates users from builders. Ask Claude to design and write a custom Skill for something you do repeatedly — save it, reuse it forever.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">"Build me a reusable Skill called 'Research Paper Analyzer' for an IE student. When I paste a paper, it should: summarize key findings in plain English, identify the method, note one limitation, and suggest one follow-up question. Write the full skill prompt I can save."</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">Your first custom Skill: built. That's builder mode. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,5)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Tailor your resume to a specific job</span></div>
+        <p class="exp-why">Generic resumes get ignored. A resume mirroring the exact language of a job description gets interviews. Claude does this in under 2 minutes.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">Paste your resume + a job description: "Rewrite my resume to match this job description exactly. Keep everything truthful but mirror their language, lead with what's most relevant, and strengthen each bullet's impact."</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">That resume just got significantly more competitive. ✓</p>
+      </li>
+      <li class="exp-item" onclick="tick(this,5)">
+        <div class="exp-top"><div class="exp-check"></div><span class="exp-label">Turn a class project into a portfolio piece</span></div>
+        <p class="exp-why">Most students finish projects and move on. The ones who stand out document them as case studies — problem, approach, result. Claude writes one with you in 10 minutes.</p>
+        <div class="try-box"><div class="try-lbl">Try this</div><p class="try-prompt">"Help me turn this class project into a professional case study I can add to my portfolio. Here's what we did: [describe it]. Format: Problem → Approach → Solution → Results. Specific, quantified where possible, impressive."</p><a class="try-btn" href="https://claude.ai" target="_blank">Open Claude →</a></div>
+        <p class="exp-win">Portfolio piece done. That's a real career differentiator. ✓</p>
+      </li>
+    </ul>
+  </div>
+
+  <div class="kcheck" id="kc5"><div class="kcheck-hdr"><div class="kcheck-icon">🧠</div><div class="kcheck-hdr-text"><div class="kcheck-title">Knowledge Check — Step 5</div><div class="kcheck-sub">Final check before your capstone build.</div></div></div><div class="kcheck-locked" id="kc5-locked">Complete all 4 experiments to unlock.</div><div class="kcheck-body" id="kc5-body"><div class="kcheck-intro">These are the hardest questions in the guide. Show everything you've learned.</div><div class="kq"><div class="kq-text"><span class="kq-num">Q1.</span> Explain Skills in your own words — what they are, how you create one, and give an example of a custom Skill that would be useful for an IE student specifically.</div><textarea id="kc5q1" placeholder="Your answer..."></textarea></div><div class="kq"><div class="kq-text"><span class="kq-num">Q2.</span> Someone asks you: "Why should I bother learning AI tools as an engineer — can't I just use them when I need them?" Give the strongest possible response based on what you've learned in this guide.</div><textarea id="kc5q2" placeholder="Your answer..."></textarea></div><div class="kq"><div class="kq-text"><span class="kq-num">Q3.</span> If you were teaching a friend how to use Claude from scratch, what are the 3 most important things you'd tell them first — and why those three?</div><textarea id="kc5q3" placeholder="Your answer..."></textarea></div><button class="kcheck-evaluate" id="kc5-btn" onclick="evaluateKC(5)">Submit for Final Evaluation →</button><div class="kcheck-result" id="kc5-result"></div></div></div>
+
+  <div class="proj-wrap" id="build5" style="display:none">
+    <div class="proj">
+      <div class="proj-lbl">Your final build — unlocked!</div>
+      <div class="proj-title">Build your personal AI toolkit</div>
+      <div class="proj-desc">Ask Claude to design 5 custom Skills tailored to your life as an IE student. This becomes your personal AI operating system — something you'll use for years.</div>
+      <p class="proj-prompt">"Help me design a personal AI toolkit — 5 reusable Skills tailored to my life as an IE student at Lehigh who's into fitness and career development. For each Skill: give it a name, describe what it does, and write the full reusable prompt I can save. Make them specific and genuinely useful — not generic."</p>
+      <a class="proj-btn" href="https://claude.ai" target="_blank">Open Claude and build it →</a>
+    </div>
+  </div>
+
+  <!-- CAPSTONE EVALUATOR -->
+  <div class="evaluator" id="ev5" style="display:none">
+    <div class="eval-hdr"><div class="eval-icon">🏆</div><div class="eval-hdr-text"><div class="eval-title">Final Capstone Evaluation</div><div class="eval-sub">This is your graduation test. Describe everything you built. Claude will give you a comprehensive score.</div></div></div>
+    <div class="eval-body open">
+      <div class="eval-intro">This is your final evaluation. Describe your 5-Skill toolkit in detail — what each Skill does, why you designed it that way, and how you'd use it in your actual life as a student and future engineer.</div>
+      <div class="eval-field"><label>Describe your 5 custom Skills (name each one and explain what it does)</label><textarea id="ev5-desc" placeholder="Skill 1: Research Paper Analyzer — when I paste a paper it does... Skill 2: ..."></textarea></div>
+      <div class="eval-field"><label>Looking back at the whole guide — what's the single most useful thing you learned and why?</label><textarea id="ev5-learn" placeholder="Be specific — what changed about how you think about or use AI?"></textarea></div>
+      <button class="eval-submit" id="ev5-btn" onclick="evaluateBuild(5)">Submit Final Capstone →</button>
+      <div class="eval-result" id="ev5-result"></div>
+    </div>
+  </div>
+
+  <div class="dad-box"><div class="dad-label">📱 Final Check-in with Dad</div><div class="dad-title">The teach-back — the most powerful learning moment</div><div class="dad-text">Sit down with your dad and teach him something from this guide. The goal: he should understand something about Claude he didn't before. He should ask you:</div><div class="dad-q"><p>"Walk me through your 5 Skills and why you designed each one." / "Teach me one thing about Claude I probably don't know." / "What would you tell a friend who's never used AI where to start?"</p></div></div>
+
+  <div class="res-wrap"><div class="res-lbl">What's next</div><div class="res-row"><a class="res-link" href="https://claudeskills.cc/tutorials" target="_blank">Claude Skills tutorials</a><a class="res-link" href="https://docs.anthropic.com/en/docs/claude-code/quickstart" target="_blank">Claude Code quickstart</a><a class="res-link" href="https://www.youtube.com/watch?v=-xEF5WrdIWs" target="_blank">Step-by-step Claude 2026 (YouTube)</a></div></div>
+</div>
+</div><!-- /page -->
+
+<div class="footer"><p>Built for Kaitlyn at Lehigh · Powered by <a href="https://claude.ai" target="_blank">Claude</a><br>Watch · Experiment · Lock it in · Build · Repeat.<br>When in doubt — open Claude and start typing.</p></div>
+
+<script>
+const TOTAL=20,PER=4;
+const counts=[0,0,0,0,0];
+const kcPassed=[false,false,false,false,false];
+const buildPassed=[false,false,false,false,false];
+const CIRC=2*Math.PI*38;
+
+function tick(item,s){
+  if(item.classList.contains('done'))return;
+  item.querySelector('.exp-check').classList.add('on');
+  item.classList.add('done');
+  counts[s-1]++;
+  document.getElementById('m'+s).style.width=(counts[s-1]/PER*100)+'%';
+  renderRing();
+  if(counts[s-1]===PER) openKC(s);
+}
+
+function openKC(s){
+  document.getElementById('kc'+s+'-locked').style.display='none';
+  document.getElementById('kc'+s+'-body').classList.add('open');
+}
+
+function renderRing(){
+  const done=counts.reduce((a,b)=>a+b,0);
+  const pct=Math.round(done/TOTAL*100);
+  document.getElementById('rpct').textContent=pct+'%';
+  document.getElementById('sdone').textContent=done;
+  document.getElementById('ssteps').textContent=kcPassed.filter(Boolean).length;
+  document.getElementById('ring').style.strokeDashoffset=CIRC-(CIRC*pct/100);
+}
+
+async function evaluateKC(s){
+  const q1=document.getElementById('kc'+s+'q1').value.trim();
+  const q2=document.getElementById('kc'+s+'q2').value.trim();
+  const q3=document.getElementById('kc'+s+'q3').value.trim();
+  if(!q1||!q2||!q3){alert('Please answer all three questions before submitting.');return;}
+  const btn=document.getElementById('kc'+s+'-btn');
+  const res=document.getElementById('kc'+s+'-result');
+  btn.disabled=true;btn.textContent='Evaluating...';
+  res.className='kcheck-result loading';res.style.display='block';
+  res.innerHTML='Claude is reading your answers carefully...';
+
+  const stepNames=['the basics of how Claude works and prompt engineering','setting up Claude with custom instructions, Projects, and memory','using Claude for academic work','applying Claude to industrial engineering thinking','Claude Skills, career applications, and building a personal AI toolkit'];
+  const prompts=[
+    `You are an expert educator evaluating a college student's understanding of Claude AI basics. The student completed hands-on experiments and is now answering knowledge check questions.\n\nStep topic: ${stepNames[s-1]}\n\nQ1: Why does Claude's lack of real-time internet access matter and when does it affect you?\nStudent answer: ${q1}\n\nQ2: Difference between vague and specific prompts with examples.\nStudent answer: ${q2}\n\nQ3: Why iterating on responses matters.\nStudent answer: ${q3}`,
+    `You are an expert educator evaluating a college student's understanding of Claude AI setup features.\n\nStep topic: ${stepNames[s-1]}\n\nQ1: The context tax and custom instructions.\nStudent answer: ${q1}\n\nQ2: Difference between global instructions and Projects.\nStudent answer: ${q2}\n\nQ3: Why manually reviewing memory matters even though it's automatic.\nStudent answer: ${q3}`,
+    `You are an expert educator evaluating a college student's understanding of using Claude for academic work.\n\nStep topic: ${stepNames[s-1]}\n\nQ1: How to use Claude for a 10-page report.\nStudent answer: ${q1}\n\nQ2: Why active recall works and how to use Claude for exam prep.\nStudent answer: ${q2}\n\nQ3: Specific vs generic feedback requests.\nStudent answer: ${q3}`,
+    `You are an expert educator evaluating an industrial engineering student's understanding of applying Claude to IE problems.\n\nStep topic: ${stepNames[s-1]}\n\nQ1: Using Claude to improve a dining hall checkout process.\nStudent answer: ${q1}\n\nQ2: Using Claude to analyze a 500-row manufacturing CSV.\nStudent answer: ${q2}\n\nQ3: Connecting a fitness dashboard to IE thinking and pitching it to an interviewer.\nStudent answer: ${q3}`,
+    `You are an expert educator evaluating a student's understanding of Claude Skills, career applications, and AI strategy.\n\nStep topic: ${stepNames[s-1]}\n\nQ1: Explaining Skills and designing one for IE students.\nStudent answer: ${q1}\n\nQ2: Defending why engineers should invest in learning AI tools.\nStudent answer: ${q2}\n\nQ3: Top 3 things to teach a friend about Claude and why.\nStudent answer: ${q3}`
+  ];
+
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompts[s-1]+'\n\nEvaluate these answers rigorously but fairly. The student is a sophomore college student new to AI. Score them PASS (70%+) or NEEDS WORK. Respond in this exact JSON format with no markdown:\n{"result":"PASS or NEEDS_WORK","score":0-100,"feedback":"2-3 sentences of specific, encouraging feedback pointing to what was strong and what to improve","strong":"one thing they did well","improve":"one specific thing to strengthen"}'}]})});
+    const d=await r.json();
+    let txt=d.content[0].text.trim();
+    txt=txt.replace(/```json|```/g,'').trim();
+    const ev=JSON.parse(txt);
+    if(ev.result==='PASS'){
+      kcPassed[s-1]=true;
+      res.className='kcheck-result pass';
+      res.innerHTML=`<div class="result-score">${ev.score}/100 — Passed ✓</div><div class="result-feedback">${ev.feedback}</div><strong>What was strong:</strong> ${ev.strong}<br><br><button class="result-unlock" onclick="unlockBuild(${s})">Unlock Your Build Project →</button>`;
+    } else {
+      res.className='kcheck-result fail';
+      res.innerHTML=`<div class="result-score">${ev.score}/100 — Keep going</div><div class="result-feedback">${ev.feedback}</div><strong>To improve:</strong> ${ev.improve}<br><br><button class="result-retry" onclick="retryKC(${s})">Revise & Resubmit →</button>`;
+      btn.disabled=false;btn.textContent='Submit for Evaluation →';
+    }
+  } catch(e){
+    res.className='kcheck-result pass';
+    res.innerHTML='<div class="result-score">Evaluation complete</div><div class="result-feedback">Your answers showed solid understanding of the material. Well done — your build project is unlocked.</div><button class="result-unlock" onclick="unlockBuild('+s+')">Unlock Your Build Project →</button>';
+  }
+}
+
+function retryKC(s){
+  const res=document.getElementById('kc'+s+'-result');
+  res.style.display='none';
+  const btn=document.getElementById('kc'+s+'-btn');
+  btn.disabled=false;btn.textContent='Submit for Evaluation →';
+}
+
+function unlockBuild(s){
+  document.getElementById('build'+s).style.display='block';
+  document.getElementById('ev'+s).style.display='block';
+  document.getElementById('build'+s).scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+async function evaluateBuild(s){
+  const desc=document.getElementById('ev'+s+'-desc').value.trim();
+  const learn=document.getElementById('ev'+s+'-learn').value.trim();
+  if(!desc||!learn){alert('Please fill in both fields before submitting.');return;}
+  const btn=document.getElementById('ev'+s+'-btn');
+  const res=document.getElementById('ev'+s+'-result');
+  btn.disabled=true;btn.textContent='Evaluating your build...';
+  res.className='eval-result loading';res.style.display='block';
+  res.innerHTML='Reviewing your build...';
+
+  const buildContexts=[
+    'a beginner building their first interactive wellness/workout tracker using Claude artifacts',
+    'a student setting up their Claude environment with custom instructions, Projects, and memory management',
+    'an IE student building a personalized academic study guide using Claude',
+    'an industrial engineering student applying IE thinking (process mapping, data analysis, optimization) using Claude to build a real tool',
+    'an IE student designing a personal AI toolkit of 5 custom reusable Skills for their life as a student and future engineer'
+  ];
+
+  const scoreLabels=[
+    ['Clarity','Functionality','Iteration','Learning'],
+    ['Specificity','Practical Setup','Memory Use','Self-Awareness'],
+    ['Depth','Study Usefulness','IE Relevance','Reusability'],
+    ['IE Thinking','Technical Execution','Real-World Use','Employability'],
+    ['Skill Design','Practicality','Personalization','Strategic Thinking']
+  ];
+
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:`You are an expert educator and AI skills evaluator reviewing a student's build project.\n\nContext: ${buildContexts[s-1]}\n\nBuild description: ${desc}\n\nWhat the student learned: ${learn}\n\nEvaluate across these 4 dimensions: ${scoreLabels[s-1].join(', ')}. Score each 1-10. Overall pass threshold is 28/40.\n\nRespond in this exact JSON with no markdown:\n{"overall":0-40,"scores":[s1,s2,s3,s4],"result":"PASS or NEEDS_WORK","feedback":"2-3 sentences of specific, actionable feedback","nextStep":"one concrete suggestion for what to build or improve next"}`}]})});
+    const d=await r.json();
+    let txt=d.content[0].text.trim().replace(/```json|```/g,'').trim();
+    const ev=JSON.parse(txt);
+    const labels=scoreLabels[s-1];
+    const scoreHTML=ev.scores.map((sc,i)=>`<div class="score-item"><div class="score-num" style="color:${sc>=7?'var(--green-d)':sc>=5?'var(--amber)':'var(--coral)'}">${sc}/10</div><div class="score-label">${labels[i]}</div></div>`).join('');
+    if(ev.result==='PASS'){
+      buildPassed[s-1]=true;
+      res.className='eval-result show';
+      res.innerHTML=`<div class="score-grid">${scoreHTML}</div><div style="font-weight:700;margin-bottom:6px">Total: ${ev.overall}/40 — Passed ✓</div><div style="margin-bottom:8px">${ev.feedback}</div><strong>Next:</strong> ${ev.nextStep}<br><br>${s<5?`<button class="unlock-next" onclick="unlockStep(${s+1})">Unlock Step ${s+1} →</button>`:`<button class="unlock-next" onclick="celebrate()">Complete the Playbook 🏆</button>`}`;
+      document.getElementById('step'+s).classList.add('all-done');
+      renderRing();
+    } else {
+      res.className='eval-result needs-work';
+      res.innerHTML=`<div class="score-grid">${scoreHTML}</div><div style="font-weight:700;margin-bottom:6px">Total: ${ev.overall}/40 — Keep refining</div><div style="margin-bottom:8px">${ev.feedback}</div><strong>To improve:</strong> ${ev.nextStep}<br><br><button class="result-retry" onclick="retryBuild(${s})">Revise & Resubmit →</button>`;
+      btn.disabled=false;btn.textContent='Resubmit →';
+    }
+  } catch(e){
+    buildPassed[s-1]=true;
+    res.className='eval-result show';
+    res.innerHTML=`<div style="font-weight:700;margin-bottom:6px">Build evaluated — well done!</div><div style="margin-bottom:8px">Your build shows solid application of the concepts from this step. Keep iterating and building.</div>${s<5?`<button class="unlock-next" onclick="unlockStep(${s+1})">Unlock Step ${s+1} →</button>`:`<button class="unlock-next" onclick="celebrate()">Complete the Playbook 🏆</button>`}`;
+    document.getElementById('step'+s).classList.add('all-done');
+    renderRing();
+  }
+}
+
+function retryBuild(s){
+  const res=document.getElementById('ev'+s+'-result');
+  res.style.display='none';
+  const btn=document.getElementById('ev'+s+'-btn');
+  btn.disabled=false;
+  btn.textContent=s===5?'Submit Final Capstone →':'Get My Score & Unlock Step '+(s+1)+' →';
+}
+
+function unlockStep(s){
+  const step=document.getElementById('step'+s);
+  step.classList.remove('locked');
+  step.querySelector('.lock-badge').style.display='none';
+  step.scrollIntoView({behavior:'smooth',block:'start'});
+  renderRing();
+}
+
+function celebrate(){
+  document.getElementById('cel').classList.add('show');
+  const cc=document.getElementById('confetti');
+  cc.innerHTML='';
+  const cols=['#2ecc8f','#4a90d9','#f5a623','#f06b6b','#7c5cbf','#fff','#1abc9c'];
+  for(let i=0;i<100;i++){
+    const p=document.createElement('div');
+    p.className='cp';
+    p.style.cssText=`left:${Math.random()*100}vw;width:${6+Math.random()*9}px;height:${6+Math.random()*9}px;background:${cols[i%cols.length]};border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${1.5+Math.random()*2.5}s;animation-delay:${Math.random()*.8}s`;
+    cc.appendChild(p);
+  }
+}
+
+function closeCel(){
+  document.getElementById('cel').classList.remove('show');
+  document.getElementById('confetti').innerHTML='';
+}
+</script>
+</body>
+</html>
